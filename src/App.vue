@@ -22,6 +22,11 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+.font-h-big{
+  font-size: 50px;
+  font-weight: 700;
+  font-family: "Dosis", sans-serif;
+}
 .font-h {
   font-size: 18px;
   font-weight: 700;
