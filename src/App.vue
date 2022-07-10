@@ -1,32 +1,40 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+    <v-app>
+      <router-view />
+    </v-app>
   </div>
 </template>
 
+<script>
+export default {
+  mounted() {
+    // this.$vuetify.theme.dark = false;
+    // console.log(this.$vuetify.theme.dark);
+  },
+};
+</script>
+
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Dosis", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
-
-nav {
-  padding: 30px;
+.font-h {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: "Dosis", sans-serif;
 }
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.font-sh {
+  font-size: 18px;
+  font-weight: 600;
+  font-family: "Dosis", sans-serif;
 }
-
-nav a.router-link-exact-active {
-  color: #42b983;
+.font-shs {
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Dosis", sans-serif;
 }
 </style>
