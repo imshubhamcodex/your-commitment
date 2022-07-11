@@ -22,7 +22,16 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-.font-h-big{
+.content-div {
+  width: 85%;
+  float: right;
+}
+.action-btn {
+  float: right;
+  margin-top: -50px;
+  margin-right: 60px;
+}
+.font-h-big {
   font-size: 50px;
   font-weight: 700;
   font-family: "Dosis", sans-serif;

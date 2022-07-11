@@ -3,7 +3,7 @@
     <template>
       <v-card id="card-nav">
         <v-toolbar flat class="limit-height">
-          <v-toolbar-title class="font-h">COMMITMENTS</v-toolbar-title>
+          <v-toolbar-title class="font-h">DASHBOARD</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-icon class="mr-1">mdi-cellphone-text</v-icon>
           <span class="grey--text font-shs mr-10">29 Aug 2019</span>
