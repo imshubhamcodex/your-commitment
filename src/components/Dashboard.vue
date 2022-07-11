@@ -26,8 +26,8 @@
       </v-btn>
       <template>
         <v-container class="mt-8">
-          <v-row v-for="n in 2" :key="n" class="mx-auto">
-            <v-col v-for="k in 3" :key="k">
+          <v-row v-for="n in 2" :key="n + 'row-dashboard'" class="mx-auto">
+            <v-col v-for="k in 3" :key="k + 'col-dashboard'">
               <template>
                 <v-card
                   class="mx-auto"
@@ -82,7 +82,14 @@
                     </v-list-item-content>
 
                     <v-avatar color="grey" size="88">
-                      <span class="white--text text-h5">SK</span>
+                      <span class="white--text text-h5">{{
+                        person[k + (n - 1) * 3 - 1].name
+                          .split(" ")[0]
+                          .substring(0, 1) +
+                        person[k + (n - 1) * 3 - 1].name
+                          .split(" ")[1]
+                          .substring(0, 1)
+                      }}</span>
                     </v-avatar>
                   </v-list-item>
                   <v-btn
@@ -92,6 +99,7 @@
                     color="cyan"
                     dark
                     width="100%"
+                    :disabled="person[k + (n - 1) * 3 - 1].id === UID"
                   >
                     <span class="font-shs"> CONNECT </span>
                   </v-btn>
@@ -202,7 +210,7 @@ export default {
       location_state: [
         "Bihar",
         "Haryana",
-        "Jammu and Kashmir",
+        "J&K",
         "Karnataka",
         "Kerala",
         "Madhya Pradesh",
@@ -215,6 +223,7 @@ export default {
       location_country: ["INDIA"],
       person: [],
       users: [],
+      UID: "",
     };
   },
   methods: {
@@ -248,86 +257,13 @@ export default {
     },
   },
   mounted() {
-    const data = [
-      {
-        id: "1",
-        name: "Shubham Kumar",
-        location_state_index: 0,
-        location_country_index: 0,
-        commitments: 3,
-        connections: 5,
-        stars: 30,
-      },
-      {
-        id: "2",
-        name: "Monu Kumar",
-        location_state_index: 0,
-        location_country_index: 0,
-        commitments: 93,
-        connections: 55,
-        stars: 10,
-      },
-      {
-        id: "3",
-        name: "Sunny Kumar",
-        location_state_index: 0,
-        location_country_index: 0,
-        commitments: 1,
-        connections: 0,
-        stars: 3,
-      },
-      {
-        id: "4",
-        name: "Tanvi Aggarwal",
-        location_state_index: 1,
-        location_country_index: 0,
-        commitments: 3,
-        connections: 50,
-        stars: 300,
-      },
-      {
-        id: "5",
-        name: "Manish Kumar",
-        location_state_index: 7,
-        location_country_index: 0,
-        commitments: 2,
-        connections: 15,
-        stars: 6,
-      },
-      {
-        id: "6",
-        name: "Monu Kumar",
-        location_state_index: 0,
-        location_country_index: 0,
-        commitments: 93,
-        connections: 55,
-        stars: 10,
-      },
-      {
-        id: "7",
-        name: "Sunny Kumar",
-        location_state_index: 0,
-        location_country_index: 0,
-        commitments: 1,
-        connections: 0,
-        stars: 3,
-      },
-      {
-        id: "8",
-        name: "Tanvi Aggarwal",
-        location_state_index: 1,
-        location_country_index: 0,
-        commitments: 3,
-        connections: 50,
-        stars: 300,
-      },
-    ];
-    this.users = data;
+    this.users = this.$store.getters.getPeople;
     if (this.users.length <= 6) {
       this.person = this.users;
     } else {
       this.person = this.users.slice(0, 6);
     }
+    this.UID = this.$store.getters.getUID;
   },
 };
 </script>

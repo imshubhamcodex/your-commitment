@@ -7,10 +7,137 @@
 </template>
 
 <script>
+import firebase from "firebase";
 export default {
   mounted() {
     // this.$vuetify.theme.dark = false;
     // console.log(this.$vuetify.theme.dark);
+    // const UID = (Math.random() + 1).toString(36).substring(7);
+
+    // firebase
+    //   .firestore()
+    //   .collection("USERS")
+    //   .doc(UID)
+    //   .set({
+    //     id: UID,
+    //     name: "Saket Kumar",
+    //     state_index: 2,
+    //     country_index: 0,
+    //     image_id: null,
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error Saving user:", error);
+    //   });
+    // let UID = "f4snii";
+    // firebase
+    //   .firestore()
+    //   .collection("COMMITMENTS")
+    //   .doc(UID)
+    //   .set({
+    //     COMMITMENTS: [
+    //       {
+    //         title: "Commitment 1",
+    //         description: "Commitment 1 Description",
+    //         stars: 11,
+    //         upadatedOn: Date.now(),
+    //         seen: 4,
+    //         replicated: 1,
+    //         shared: 5,
+    //         id: UID,
+    //       },
+    //       {
+    //         title: "Commitment 1",
+    //         description: "Commitment 1 Description",
+    //         stars: 1,
+    //         upadatedOn: Date.now(),
+    //         seen: 0,
+    //         replicated: 1,
+    //         shared: 3,
+    //         id: UID,
+    //       }
+    //     ],
+    //   },{merge: true})
+    //   .catch((error) => {
+    //     console.log("Error Saving Commitment:", error);
+    //   });
+
+    // firebase
+    //   .firestore()
+    //   .collection("CONNECTIONS")
+    //   .doc(UID)
+    //   .set({
+    //     CONNECTIONS: [
+    //       {
+    //         connectedOn: Date.now(),
+    //         connectedWith: "Conneted UID",
+    //         id: "UID",
+    //       },
+    //     ],
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error Saving Connections:", error);
+    //   },{merge: true});
+
+    // firebase
+    //   .firestore()
+    //   .collection("SUPPORT")
+    //   .doc(UID)
+    //   .set({
+    //     SUPPORT: [
+    //       {
+    //         createdOn: Date.now(),
+    //         useremail: "edwssm@gmail.com",
+    //         message: "This is a message",
+    //         uid: "UID",
+    //       },
+    //     ],
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error Saving Connections:", error);
+    //   });
+
+    let UID = "f4snii";
+    firebase
+      .firestore()
+      .collection("USERS")
+      .get()
+      .then((res) => {
+        res.docs.forEach((doc) => {
+          console.log(doc.data());
+          this.$store.commit("setPeople", doc.data());
+        });
+      })
+      .catch((error) => {
+        console.log("Error Getting USERS:", error);
+      });
+
+    firebase
+      .firestore()
+      .collection("COMMITMENTS")
+      .get()
+      .then((res) => {
+        res.docs.forEach((doc) => {
+          console.log(doc.data().COMMITMENTS);
+          this.$store.commit("setCommitment", doc.data().COMMITMENTS);
+        });
+      })
+      .catch((error) => {
+        console.log("Error Getting COMMITMENTS:", error);
+      });
+
+    firebase
+      .firestore()
+      .collection("CONNECTIONS")
+      .get()
+      .then((res) => {
+        res.docs.forEach((doc) => {
+          console.log(doc.data().CONNECTIONS);
+          this.$store.commit("setConnection", doc.data().CONNECTIONS);
+        });
+      })
+      .catch((error) => {
+        console.log("Error Getting CONNECTIONS:", error);
+      });
   },
 };
 </script>

@@ -7,10 +7,14 @@
         <v-icon right dark> mdi-plus-circle </v-icon>
       </v-btn>
       <template>
-        <v-container class="mt-8" style="height: 70vh; overflow: auto;">
+        <v-container class="mt-8" style="height: 70vh; overflow: auto">
           <template>
             <v-expansion-panels focusable>
-              <v-expansion-panel class="mt-3" v-for="(item, i) in 3" :key="i">
+              <v-expansion-panel
+                class="mt-3"
+                v-for="(item, i) in commitments"
+                :key="i + 'commintments'"
+              >
                 <v-card class="mx-auto mr-5" color="cyan" dark width="100%">
                   <v-card-actions>
                     <v-list-item class="grow">
@@ -18,7 +22,9 @@
 
                       <v-list-item-content>
                         <v-list-item-title class="ml-4">
-                          <span style="font-size:23px; font-weight:bold">No caffine for life time</span>
+                          <span style="font-size: 18px; font-weight: bold">{{
+                            item.title
+                          }}</span>
                         </v-list-item-title>
                       </v-list-item-content>
 
@@ -38,7 +44,7 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      content="6"
+                      :content="item.stars"
                       overlap
                       bordered
                     >
@@ -47,7 +53,7 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      content="6"
+                      :content="item.seen"
                       overlap
                       bordered
                     >
@@ -56,7 +62,7 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      content="6"
+                      :content="item.replicated"
                       overlap
                       bordered
                     >
@@ -65,22 +71,19 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      content="6"
+                      :content="item.shared"
                       overlap
                       bordered
                     >
                       <v-icon color="teal">mdi-share-variant</v-icon>
                     </v-badge>
                   </span>
-                  <span>
-                  Updated on: 29 Aug 2019
+                  <span> Updated on 
+                    {{ new Date(item.upadatedOn).toString().substring(0, 15) }}
                   </span>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  {{ item.description }}
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -92,7 +95,18 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      commitments: [],
+      person: {},
+    };
+  },
+  mounted() {
+    this.person = this.$store.getters.getPerson[0];
+    this.commitments = this.person.allCommitments;
+  },
+};
 </script>
 
 <style></style>
