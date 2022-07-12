@@ -44,7 +44,9 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      :content="item.stars"
+                      :content="
+                        item.stars.length === 0 ? '0' : item.stars.length
+                      "
                       overlap
                       bordered
                     >
@@ -53,7 +55,7 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      :content="item.seen"
+                      :content="item.seen.length === 0 ? '0' : item.seen.length"
                       overlap
                       bordered
                     >
@@ -62,7 +64,11 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      :content="item.replicated"
+                      :content="
+                        item.replicated.length === 0
+                          ? '0'
+                          : item.replicated.length
+                      "
                       overlap
                       bordered
                     >
@@ -71,14 +77,17 @@
                     <v-badge
                       class="mr-4"
                       color="blue"
-                      :content="item.shared"
+                      :content="
+                        item.shared.length === 0 ? '0' : item.shared.length
+                      "
                       overlap
                       bordered
                     >
                       <v-icon color="teal">mdi-share-variant</v-icon>
                     </v-badge>
                   </span>
-                  <span> Updated on 
+                  <span>
+                    Updated on
                     {{ new Date(item.upadatedOn).toString().substring(0, 15) }}
                   </span>
                 </v-expansion-panel-header>

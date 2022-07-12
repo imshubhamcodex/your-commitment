@@ -29,21 +29,33 @@ export default new Vuex.Store({
         location_country_index: payload.country_index,
         commitments: 0,
         connections: 0,
-        stars: 0,
+        starsCount: 0,
+        seenCount: 0,
+        replicatedCount: 0,
+        sharedCount: 0,
       };
       state.people.push(data);
     },
     setCommitment(state, payload) {
-      let stars = 0;
+      let starsCount = 0;
+      let seenCount = 0;
+      let replicatedCount = 0;
+      let sharedCount = 0;
       payload.forEach((commitment) => {
-        stars += commitment.stars;
+        starsCount += commitment.stars.length;
+        seenCount += commitment.seen.length;
+        replicatedCount += commitment.replicated.length;
+        sharedCount += commitment.shared.length;
       });
 
       state.people.forEach((person) => {
         if (person.id === payload[0].id) {
           person.commitments = payload.length;
           person.allCommitments = payload;
-          person.stars = stars;
+          person.starsCount = starsCount;
+          person.seenCount = seenCount;
+          person.replicatedCount = replicatedCount;
+          person.sharedCount = sharedCount;
           return;
         }
       });

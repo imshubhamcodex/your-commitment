@@ -13,7 +13,7 @@ export default {
     // this.$vuetify.theme.dark = false;
     // console.log(this.$vuetify.theme.dark);
     // const UID = (Math.random() + 1).toString(36).substring(7);
-
+    // let UID = "f4snii";
     // firebase
     //   .firestore()
     //   .collection("USERS")
@@ -24,11 +24,13 @@ export default {
     //     state_index: 2,
     //     country_index: 0,
     //     image_id: null,
+    //     allCommitments: [],
+    //     allConnections: [],
     //   })
     //   .catch((error) => {
     //     console.log("Error Saving user:", error);
     //   });
-    // let UID = "f4snii";
+    
     // firebase
     //   .firestore()
     //   .collection("COMMITMENTS")
@@ -38,22 +40,24 @@ export default {
     //       {
     //         title: "Commitment 1",
     //         description: "Commitment 1 Description",
-    //         stars: 11,
     //         upadatedOn: Date.now(),
-    //         seen: 4,
-    //         replicated: 1,
-    //         shared: 5,
+    //         stars:['too4c'],
+    //         seen: ['too4c'],
+    //         replicated: ['too4c'],
+    //         shared: ['too4c'],
     //         id: UID,
+    //         commitment_id: (Math.random() + 1).toString(36).substring(7),
     //       },
     //       {
-    //         title: "Commitment 1",
-    //         description: "Commitment 1 Description",
-    //         stars: 1,
+    //         title: "Commitment 2",
+    //         description: "Commitment 2 Description",
     //         upadatedOn: Date.now(),
-    //         seen: 0,
-    //         replicated: 1,
-    //         shared: 3,
+    //         stars:[],
+    //         seen: [],
+    //         replicated: [],
+    //         shared: [],
     //         id: UID,
+    //         commitment_id: (Math.random() + 1).toString(36).substring(7),
     //       }
     //     ],
     //   },{merge: true})
@@ -61,40 +65,40 @@ export default {
     //     console.log("Error Saving Commitment:", error);
     //   });
 
-    // firebase
-    //   .firestore()
-    //   .collection("CONNECTIONS")
-    //   .doc(UID)
-    //   .set({
-    //     CONNECTIONS: [
-    //       {
-    //         connectedOn: Date.now(),
-    //         connectedWith: "Conneted UID",
-    //         id: "UID",
-    //       },
-    //     ],
-    //   })
-    //   .catch((error) => {
-    //     console.log("Error Saving Connections:", error);
-    //   },{merge: true});
+    // // firebase
+    // //   .firestore()
+    // //   .collection("CONNECTIONS")
+    // //   .doc(UID)
+    // //   .set({
+    // //     CONNECTIONS: [
+    // //       {
+    // //         connectedOn: Date.now(),
+    // //         connectedWith: "Conneted UID",
+    // //         id: "UID",
+    // //       },
+    // //     ],
+    // //   })
+    // //   .catch((error) => {
+    // //     console.log("Error Saving Connections:", error);
+    // //   },{merge: true});
 
-    // firebase
-    //   .firestore()
-    //   .collection("SUPPORT")
-    //   .doc(UID)
-    //   .set({
-    //     SUPPORT: [
-    //       {
-    //         createdOn: Date.now(),
-    //         useremail: "edwssm@gmail.com",
-    //         message: "This is a message",
-    //         uid: "UID",
-    //       },
-    //     ],
-    //   })
-    //   .catch((error) => {
-    //     console.log("Error Saving Connections:", error);
-    //   });
+    // // firebase
+    // //   .firestore()
+    // //   .collection("SUPPORT")
+    // //   .doc(UID)
+    // //   .set({
+    // //     SUPPORT: [
+    // //       {
+    // //         createdOn: Date.now(),
+    // //         useremail: "edwssm@gmail.com",
+    // //         message: "This is a message",
+    // //         uid: "UID",
+    // //       },
+    // //     ],
+    // //   })
+    // //   .catch((error) => {
+    // //     console.log("Error Saving Connections:", error);
+    // //   });
 
     let UID = "f4snii";
     firebase
