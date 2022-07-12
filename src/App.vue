@@ -13,6 +13,7 @@ export default {
     // this.$vuetify.theme.dark = false;
     // console.log(this.$vuetify.theme.dark);
     // const UID = (Math.random() + 1).toString(36).substring(7);
+
     // let UID = "f4snii";
     // firebase
     //   .firestore()
@@ -30,7 +31,7 @@ export default {
     //   .catch((error) => {
     //     console.log("Error Saving user:", error);
     //   });
-    
+
     // firebase
     //   .firestore()
     //   .collection("COMMITMENTS")
@@ -65,40 +66,59 @@ export default {
     //     console.log("Error Saving Commitment:", error);
     //   });
 
-    // // firebase
-    // //   .firestore()
-    // //   .collection("CONNECTIONS")
-    // //   .doc(UID)
-    // //   .set({
-    // //     CONNECTIONS: [
-    // //       {
-    // //         connectedOn: Date.now(),
-    // //         connectedWith: "Conneted UID",
-    // //         id: "UID",
-    // //       },
-    // //     ],
-    // //   })
-    // //   .catch((error) => {
-    // //     console.log("Error Saving Connections:", error);
-    // //   },{merge: true});
+    // firebase
+    //   .firestore()
+    //   .collection("CONNECTIONS")
+    //   .doc(UID)
+    //   .set({
+    //     CONNECTIONS: [
+    //       {
+    //         connectedOn: Date.now(),
+    //         connectedWith: "Conneted UID",
+    //         id: "UID",
+    //       },
+    //     ],
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error Saving Connections:", error);
+    //   },{merge: true});
 
-    // // firebase
-    // //   .firestore()
-    // //   .collection("SUPPORT")
-    // //   .doc(UID)
-    // //   .set({
-    // //     SUPPORT: [
-    // //       {
-    // //         createdOn: Date.now(),
-    // //         useremail: "edwssm@gmail.com",
-    // //         message: "This is a message",
-    // //         uid: "UID",
-    // //       },
-    // //     ],
-    // //   })
-    // //   .catch((error) => {
-    // //     console.log("Error Saving Connections:", error);
-    // //   });
+    // firebase
+    //   .firestore()
+    //   .collection("CONNECT_REQ")
+    //   .doc(UID)
+    //   .set({
+    //     CONNECT_REQ: [
+    //       {
+    //         from: UID,
+    //         to: "too4c",
+    //       },
+    //     ],
+    //   })
+    //   .catch(
+    //     (error) => {
+    //       console.log("Error Sending Connect Request:", error);
+    //     },
+    //     { merge: true }
+    //   );
+
+    // firebase
+    //   .firestore()
+    //   .collection("SUPPORT")
+    //   .doc(UID)
+    //   .set({
+    //     SUPPORT: [
+    //       {
+    //         createdOn: Date.now(),
+    //         useremail: "edwssm@gmail.com",
+    //         message: "This is a message",
+    //         uid: "UID",
+    //       },
+    //     ],
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error Saving Connections:", error);
+    //   });
 
     let UID = "f4snii";
     firebase

@@ -82,26 +82,43 @@
                     </v-list-item-content>
 
                     <v-avatar color="grey" size="88">
-                      <span class="white--text text-h5">{{
-                        person[k + (n - 1) * 3 - 1].name
-                          .split(" ")[0]
-                          .substring(0, 1) +
-                        person[k + (n - 1) * 3 - 1].name
-                          .split(" ")[1]
-                          .substring(0, 1)
-                      }}</span>
+                      <span
+                        v-if="person[k + (n - 1) * 3 - 1].image_id === null"
+                        class="white--text text-h5"
+                        >{{
+                          person[k + (n - 1) * 3 - 1].name
+                            .split(" ")[0]
+                            .substring(0, 1) +
+                          person[k + (n - 1) * 3 - 1].name
+                            .split(" ")[1]
+                            .substring(0, 1)
+                        }}</span
+                      >
+                      <img
+                        v-else
+                        :src="fetchImage(person[k + (n - 1) * 3 - 1].image_id)"
+                        alt="USER IMAGE"
+                      />
                     </v-avatar>
                   </v-list-item>
                   <v-btn
                     :id="`${person[k + (n - 1) * 3 - 1].id}connect`"
                     @click.stop="sendRequest(k + (n - 1) * 3 - 1)"
                     x-small
+                    :dark="
+                      person[k + (n - 1) * 3 - 1].id === UID ? false : true
+                    "
                     color="cyan"
-                    dark
                     width="100%"
                     :disabled="person[k + (n - 1) * 3 - 1].id === UID"
                   >
-                    <span class="font-shs"> CONNECT </span>
+                    <span class="font-shs">
+                      {{
+                        person[k + (n - 1) * 3 - 1].id === UID
+                          ? "THIS IS YOU"
+                          : "CONNECT"
+                      }}
+                    </span>
                   </v-btn>
                   <v-btn
                     :id="`${person[k + (n - 1) * 3 - 1].id}cancle`"
@@ -133,7 +150,7 @@
         >
           <v-card>
             <v-card-title class="text-h6">
-              <span class="headline">
+              <span class="font-h">
                 {{ person[dialogPersonIndex].name }}
                 <span class="font-shs"
                   >from
@@ -178,23 +195,8 @@
 
                     <v-row align="center" justify="end">
                       <v-btn
-                        @click="handleStar(item.commitment_id)"
-                        class="mr-5 ma-2 white--text"
-                        v-if="!item.stars.includes(UID)"
-                        color="blue"
-                        >star<v-icon right dark>mdi-star</v-icon></v-btn
-                      >
-                      <v-btn
-                        v-else
-                        @click="handleStar(item.commitment_id)"
-                        class="mr-5 yellow--text"
-                        icon
-                      >
-                        <v-icon dark>mdi-star</v-icon>
-                      </v-btn>
-
-                      <v-btn
                         v-if="!item.replicated.includes(UID)"
+                        :disabled="item.id === UID"
                         @click="handleReplicate(item.commitment_id)"
                         color="blue"
                         class="mr-5 mr-5 ma-2 white--text"
@@ -208,7 +210,23 @@
                         class="mr-5 yellow--text"
                         icon
                       >
-                        <v-icon dark>mdi-book-plus-multiple</v-icon>
+                        <v-icon dark>mdi-file-star</v-icon>
+                      </v-btn>
+
+                      <v-btn
+                        @click="handleStar(item.commitment_id)"
+                        class="mr-5 ma-2 white--text"
+                        v-if="!item.stars.includes(UID)"
+                        color="blue"
+                        >star<v-icon right dark>mdi-star</v-icon></v-btn
+                      >
+                      <v-btn
+                        v-else
+                        @click="handleStar(item.commitment_id)"
+                        class="mr-5 yellow--text"
+                        icon
+                      >
+                        <v-icon dark>mdi-star</v-icon>
                       </v-btn>
 
                       <v-btn color="blue" class="mr-2 ma-2 white--text"
@@ -270,6 +288,7 @@ export default {
     viewPerson(index) {
       this.dialogPersonIndex = index;
       this.dialog = true;
+      this.handleSeen();
       console.log(this.person[index].id);
     },
     closeDialog() {
@@ -306,12 +325,15 @@ export default {
           if (item.stars.includes(this.UID)) {
             item.stars.splice(item.stars.indexOf(this.UID), 1);
             console.log("unstar");
+            this.person[this.dialogPersonIndex].starsCount -= 1;
           } else {
             item.stars.push(this.UID);
+            this.person[this.dialogPersonIndex].starsCount += 1;
             console.log("star");
           }
         }
       });
+      this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
     },
     handleReplicate(commitmentID) {
@@ -320,13 +342,35 @@ export default {
           if (item.replicated.includes(this.UID)) {
             item.replicated.splice(item.replicated.indexOf(this.UID), 1);
             console.log("unreplicate");
+            this.person[this.dialogPersonIndex].replicatedCount -= 1;
           } else {
             item.replicated.push(this.UID);
             console.log("replicate");
+            this.person[this.dialogPersonIndex].replicatedCount += 1;
           }
         }
       });
+      this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
+    },
+    handleSeen() {
+      if (this.person[this.dialogPersonIndex].commitments > 0) {
+        this.person[this.dialogPersonIndex].allCommitments.forEach((item) => {
+          if (!item.seen.includes(this.UID)) {
+            item.seen.push(this.UID);
+            console.log("seen");
+            this.person[this.dialogPersonIndex].seenCount += 1;
+          }
+        });
+        this.$store.commit(
+          "setIndividual",
+          this.person[this.dialogPersonIndex]
+        );
+      }
+    },
+    fetchImage() {
+      console.log("fetching image");
+      return "https://cdn.vuetifyjs.com/images/john.jpg";
     },
   },
   mounted() {

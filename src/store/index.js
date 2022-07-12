@@ -69,5 +69,13 @@ export default new Vuex.Store({
         }
       });
     },
+    setIndividual(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === payload.id) {
+          person = payload;
+          return;
+        }
+      });
+    },
   },
 });
