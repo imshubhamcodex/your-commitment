@@ -356,7 +356,14 @@ export default {
     deletePerson(person) {
       this.connections.forEach((connection, index) => {
         if (connection.connectedWith.includes(person.id)) {
-          this.connections.splice(index, 1);
+          if (connection.connectedWith.length === 1) {
+            this.connections.splice(index, 1);
+          } else {
+            connection.connectedWith.splice(
+              connection.connectedWith.indexOf(person.id),
+              1
+            );
+          }
         }
       });
       this.person.forEach((p, index) => {
@@ -369,23 +376,21 @@ export default {
       currentUser.connections = this.connections.length;
       currentUser.allConnections = this.connections;
 
-      let people = this.$store.getters.getPeople;
-      people.forEach((pep) => {
-        if (pep.id === person.id) {
-          pep.allConnections.forEach((con, index) => {
-            if (con.connectedWith.includes(currentUser.id)) {
-              pep.connections -= 1;
-              con.connectedWith.splice(
-                con.connectedWith.indexOf(currentUser.id),
-                1
-              );
-            }
-          });
+      person.allConnections.forEach((con, index) => {
+        if (con.connectedWith.includes(currentUser.id)) {
+          if (con.connectedWith.length === 1) {
+            person.allConnections.splice(index, 1);
+          } else {
+            con.connectedWith.splice(
+              con.connectedWith.indexOf(currentUser.id),
+              1
+            );
+          }
         }
       });
 
       this.$store.commit("setIndividual", currentUser);
-      this.$store.commit("setIndividual", people);
+      this.$store.commit("setIndividual", person);
       console.log(currentUser);
     },
     fetchImage() {

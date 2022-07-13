@@ -300,7 +300,15 @@ export default {
         "none";
       document.getElementById(`${this.person[index].id}cancle`).style.display =
         "block";
-      console.log("send request");
+      console.log("send request", this.person[index]);
+
+      const conn = [
+        {
+          from: this.UID,
+          to: this.person[index].id,
+        },
+      ];
+      this.$store.commit("setConnectionRequest", conn);
     },
     cancleRequest(index) {
       document.getElementById(`${this.person[index].id}connect`).style.display =

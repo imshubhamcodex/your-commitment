@@ -14,7 +14,7 @@ export default {
     // console.log(this.$vuetify.theme.dark);
     // const UID = (Math.random() + 1).toString(36).substring(7);
 
-    // let UID = "f4snii";
+    let UID = "f4snii";
     // firebase
     //   .firestore()
     //   .collection("USERS")
@@ -27,6 +27,8 @@ export default {
     //     image_id: null,
     //     allCommitments: [],
     //     allConnections: [],
+    //     connectRequestSend: [],
+    //     connectRequestRecived: [],
     //   })
     //   .catch((error) => {
     //     console.log("Error Saving user:", error);
@@ -42,7 +44,7 @@ export default {
     //         title: "Commitment 1",
     //         description: "Commitment 1 Description",
     //         upadatedOn: Date.now(),
-    //         stars:[],
+    //         stars: [],
     //         seen: [],
     //         replicated: [],
     //         shared: [],
@@ -53,15 +55,15 @@ export default {
     //         title: "Commitment 2",
     //         description: "Commitment 2 Description",
     //         upadatedOn: Date.now(),
-    //         stars:[],
+    //         stars: [],
     //         seen: [],
     //         replicated: [],
     //         shared: [],
     //         id: UID,
     //         commitment_id: (Math.random() + 1).toString(36).substring(7),
-    //       }
+    //       },
     //     ],
-    //   },{merge: true})
+    //   })
     //   .catch((error) => {
     //     console.log("Error Saving Commitment:", error);
     //   });
@@ -74,22 +76,24 @@ export default {
     //     CONNECTIONS: [
     //       {
     //         connectedOn: Date.now(),
-    //         connectedWith: ["f4snii"],
+    //         connectedWith: ["too4c"],
+    //         id: UID,
+    //       },
+    //       {
+    //         connectedOn: Date.now(),
+    //         connectedWith: ["9rzi3l"],
     //         id: UID,
     //       },
     //     ],
     //   })
-    //   .catch(
-    //     (error) => {
-    //       console.log("Error Saving Connections:", error);
-    //     },
-    //     { merge: true }
-    //   );
+    //   .catch((error) => {
+    //     console.log("Error Saving Connections:", error);
+    //   });
 
     // firebase
     //   .firestore()
     //   .collection("CONNECT_REQ")
-    //   .doc(UID)
+    //   .doc("CONNECT_REQ")
     //   .set({
     //     CONNECT_REQ: [
     //       {
@@ -98,12 +102,9 @@ export default {
     //       },
     //     ],
     //   })
-    //   .catch(
-    //     (error) => {
-    //       console.log("Error Sending Connect Request:", error);
-    //     },
-    //     { merge: true }
-    //   );
+    //   .catch((error) => {
+    //     console.log("Error Sending Connect Request:", error);
+    //   });
 
     // firebase
     //   .firestore()
@@ -123,7 +124,7 @@ export default {
     //     console.log("Error Saving Connections:", error);
     //   });
 
-    let UID = "f4snii";
+    // let UID = "f4snii";
     firebase
       .firestore()
       .collection("USERS")
@@ -164,6 +165,20 @@ export default {
       })
       .catch((error) => {
         console.log("Error Getting CONNECTIONS:", error);
+      });
+
+    firebase
+      .firestore()
+      .collection("CONNECT_REQ")
+      .get()
+      .then((res) => {
+        res.docs.forEach((doc) => {
+          console.log(doc.data().CONNECT_REQ);
+          this.$store.commit("setConnectionRequest", doc.data().CONNECT_REQ);
+        });
+      })
+      .catch((error) => {
+        console.log("Error Getting CONNECTIONS_REQUEST:", error);
       });
   },
 };

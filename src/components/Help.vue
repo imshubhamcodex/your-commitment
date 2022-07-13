@@ -10,6 +10,7 @@
               label="Your Email"
               outlined
               clearable
+              type="email"
             ></v-text-field>
             <br />
             <br />
@@ -19,7 +20,13 @@
               label="What's on your mind?"
               v-model="issue"
             ></v-textarea>
-            <v-btn color="blue" class="ma-2 white--text" style="float: right">
+            <v-btn
+              :disabled="email.trim() == '' || issue.trim() == ''"
+              color="blue"
+              class="ma-2 white--text"
+              style="float: right"
+              @click="sendIssue"
+            >
               SEND
               <v-icon right dark> mdi-send </v-icon>
             </v-btn>
@@ -37,6 +44,14 @@ export default {
       email: "",
       issue: "",
     };
+  },
+  methods: {
+    sendIssue() {
+      alert("Issue sent");
+      this.email = "";
+      this.issue = "";
+      console.log("issue sent");
+    },
   },
 };
 </script>
