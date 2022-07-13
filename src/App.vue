@@ -21,8 +21,8 @@ export default {
     //   .doc(UID)
     //   .set({
     //     id: UID,
-    //     name: "Saket Kumar",
-    //     state_index: 2,
+    //     name: "Vikash Kumar",
+    //     state_index: 7,
     //     country_index: 0,
     //     image_id: null,
     //     allCommitments: [],
@@ -42,10 +42,10 @@ export default {
     //         title: "Commitment 1",
     //         description: "Commitment 1 Description",
     //         upadatedOn: Date.now(),
-    //         stars:['too4c'],
-    //         seen: ['too4c'],
-    //         replicated: ['too4c'],
-    //         shared: ['too4c'],
+    //         stars:[],
+    //         seen: [],
+    //         replicated: [],
+    //         shared: [],
     //         id: UID,
     //         commitment_id: (Math.random() + 1).toString(36).substring(7),
     //       },
@@ -74,14 +74,17 @@ export default {
     //     CONNECTIONS: [
     //       {
     //         connectedOn: Date.now(),
-    //         connectedWith: "Conneted UID",
-    //         id: "UID",
+    //         connectedWith: ["f4snii"],
+    //         id: UID,
     //       },
     //     ],
     //   })
-    //   .catch((error) => {
-    //     console.log("Error Saving Connections:", error);
-    //   },{merge: true});
+    //   .catch(
+    //     (error) => {
+    //       console.log("Error Saving Connections:", error);
+    //     },
+    //     { merge: true }
+    //   );
 
     // firebase
     //   .firestore()

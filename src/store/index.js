@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     openTab: "DASHBOARD",
-    UID: "f4snii",
+    UID: "9rzi3l",
     people: [],
   },
   getters: {
@@ -63,7 +63,7 @@ export default new Vuex.Store({
     setConnection(state, payload) {
       state.people.forEach((person) => {
         if (person.id === payload[0].id) {
-          person.connections = payload.length;
+          person.connections = payload[0].connectedWith.length;
           person.allConnections = payload;
           return;
         }
