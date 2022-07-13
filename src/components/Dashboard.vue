@@ -115,6 +115,13 @@
                     color="cyan"
                     width="100%"
                     :disabled="person[k + (n - 1) * 3 - 1].id === UID"
+                    :style="{
+                      display: sentRequests.includes(
+                        person[k + (n - 1) * 3 - 1].id
+                      )
+                        ? 'none'
+                        : 'block',
+                    }"
                   >
                     <span class="font-shs">
                       {{
@@ -132,6 +139,13 @@
                     dark
                     width="100%"
                     class="cancle-connect-btn"
+                    :style="{
+                      display: sentRequests.includes(
+                        person[k + (n - 1) * 3 - 1].id
+                      )
+                        ? 'block'
+                        : 'none',
+                    }"
                   >
                     <span class="font-shs"> CANCLE </span>
                   </v-btn>
@@ -287,6 +301,7 @@ export default {
       users: [],
       UID: "",
       connectedPerson: [],
+      sentRequests: [],
       dialog_content_key: 0,
     };
   },
@@ -419,7 +434,12 @@ export default {
         if (item.connectedWith.length > 0)
           this.connectedPerson.push(...item.connectedWith);
       });
+
+      if (currentUser[0].connectRequestSend.length > 0)
+        this.sentRequests = [...currentUser[0].connectRequestSend];
     }
+
+    console.log(this.sentRequests);
   },
   watch: {
     accepted_id: function () {
