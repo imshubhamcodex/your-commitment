@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     openTab: "DASHBOARD",
-    UID: "f4snii",
+    UID: "too4c",
     people: [],
     notifications: 0,
   },
