@@ -33,8 +33,12 @@
                   class="mx-auto"
                   max-width="344"
                   outlined
-                  v-if="k + (n - 1) * 3 <= person.length"
+                  v-if="
+                    k + (n - 1) * 3 <= person.length &&
+                    !connectedPerson.includes(person[k + (n - 1) * 3 - 1].id)
+                  "
                   @click="viewPerson(k + (n - 1) * 3 - 1)"
+                  :key="dialog_content_key + 'vcard' + k + (n - 1) * 3"
                 >
                   <v-list-item three-line>
                     <v-list-item-content>
@@ -259,6 +263,7 @@
 
 <script>
 export default {
+  props: ["accepted_id"],
   data() {
     return {
       dialog: false,
@@ -281,6 +286,7 @@ export default {
       person: [],
       users: [],
       UID: "",
+      connectedPerson: [],
       dialog_content_key: 0,
     };
   },
@@ -406,6 +412,20 @@ export default {
       this.person = this.users.slice(0, 6);
     }
     this.UID = this.$store.getters.getUID;
+
+    let currentUser = this.$store.getters.getPerson;
+    if (currentUser.length > 0) {
+      currentUser[0].allConnections.forEach((item) => {
+        if (item.connectedWith.length > 0)
+          this.connectedPerson.push(...item.connectedWith);
+      });
+    }
+  },
+  watch: {
+    accepted_id: function () {
+      console.log(this.accepted_id);
+      this.connectedPerson.push(this.accepted_id);
+    },
   },
 };
 </script>

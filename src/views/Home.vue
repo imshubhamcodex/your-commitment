@@ -1,8 +1,8 @@
 <template>
   <div>
-    <TopNav />
+    <TopNav @accepted="accepted" />
     <SideNav />
-    <Dashboard v-if="showDashboard" />
+    <Dashboard :accepted_id="accepted_id" v-if="showDashboard" />
     <Commitments v-if="showCommitments" />
     <Connections v-if="showConnections" />
     <Help v-if="showHelp" />
@@ -32,7 +32,13 @@ export default {
       showCommitments: false,
       showConnections: false,
       showHelp: false,
+      accepted_id: "",
     };
+  },
+  methods: {
+    accepted(id) {
+      this.accepted_id = id;
+    },
   },
   watch: {
     "$store.state.openTab": function () {

@@ -176,6 +176,8 @@ export default {
       this.person.splice(this.person.indexOf(person), 1);
       this.notifications -= 1;
       this.$store.commit("setNotifications", this.notifications);
+
+      this.$emit("accepted", person.id);
     },
     declined(peep) {
       let person = peep;
