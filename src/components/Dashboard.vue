@@ -315,7 +315,24 @@ export default {
         "block";
       document.getElementById(`${this.person[index].id}cancle`).style.display =
         "none";
-      console.log("cancle request");
+
+      let person = this.person[index];
+
+      let currentUser = this.$store.getters.getPerson[0];
+      currentUser.connectRequestSend.splice(
+        currentUser.connectRequestSend.indexOf(person.id),
+        1
+      );
+
+      person.connectRequestReceived.splice(
+        person.connectRequestReceived.indexOf(currentUser.id),
+        1
+      );
+
+      this.$store.commit("setIndividual", currentUser);
+      this.$store.commit("setIndividual", person);
+
+      console.log(this.$store.state.people);
     },
     nextPage() {
       this.currentPage++;

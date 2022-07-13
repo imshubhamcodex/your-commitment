@@ -96,8 +96,6 @@ export default new Vuex.Store({
           }
         });
       });
-
-      console.log(state.people);
     },
     setIndividual(state, payload) {
       state.people.forEach((person) => {
@@ -106,6 +104,9 @@ export default new Vuex.Store({
           return;
         }
       });
+    },
+    setNotifications(state, payload) {
+      state.notifications = payload;
     },
   },
 });
