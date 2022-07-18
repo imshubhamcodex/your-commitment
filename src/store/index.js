@@ -6,9 +6,12 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     openTab: "DASHBOARD",
-    UID: "f4snii",
+    UID: "too4c",
     people: [],
-    notifications: 0,
+    notifications: -1,
+    allCommitments: [],
+    allConnections: [],
+    allConnectRequest: [],
   },
   getters: {
     getOpenTab: (state) => state.openTab,
@@ -81,7 +84,10 @@ export default new Vuex.Store({
       });
     },
     setConnectionRequest(state, payload) {
-      if (payload.length === 0) return;
+      if (payload.length === 0) {
+        state.notifications = 0;
+        return;
+      }
 
       payload.forEach((request) => {
         state.people.forEach((person) => {
@@ -107,6 +113,15 @@ export default new Vuex.Store({
     },
     setNotifications(state, payload) {
       state.notifications = Number(payload);
+    },
+    setAllCommitments(state, payload) {
+      state.allCommitments = payload;
+    },
+    setAllConnections(state, payload) {
+      state.allConnections = payload;
+    },
+    setAllConnectRequest(state, payload) {
+      state.allConnectRequest = payload;
     },
   },
 });

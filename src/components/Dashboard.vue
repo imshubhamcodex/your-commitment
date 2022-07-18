@@ -335,6 +335,7 @@ export default {
         },
       ];
       this.$store.commit("setConnectionRequest", conn);
+      this.updateDB();
     },
     cancleRequest(index) {
       document.getElementById(`${this.person[index].id}connect`).style.display =
@@ -357,6 +358,7 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
+      this.updateDB();
     },
     nextPage() {
       this.currentPage++;
@@ -383,6 +385,7 @@ export default {
       });
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
+      this.updateDB();
     },
     handleReplicate(commitmentID) {
       let toCopy = false;
@@ -430,6 +433,7 @@ export default {
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
+      this.updateDB();
     },
     handleSeen() {
       if (this.person[this.dialogPersonIndex].commitments > 0) {
@@ -444,11 +448,45 @@ export default {
           "setIndividual",
           this.person[this.dialogPersonIndex]
         );
+        this.updateDB();
       }
     },
     fetchImage() {
       console.log("fetching image");
       return "https://cdn.vuetifyjs.com/images/john.jpg";
+    },
+    updateDB() {
+      let allCommitments = [];
+      let allConnections = [];
+      let allConnectRequest = [];
+
+      let allPeople = this.$store.getters.getPeople;
+
+      allPeople.forEach((peep) => {
+        allCommitments.push(peep.allCommitments);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [...peep.allConnections];
+        arr.push(peep.id);
+        allConnections.push(arr);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [];
+        peep.connectRequestSend.forEach((conn) => {
+          let connectReq = {
+            from: peep.id,
+            to: conn,
+          };
+          arr.push(connectReq);
+        });
+        arr.push(peep.id);
+        allConnectRequest.push(arr);
+      });
+      this.$store.commit("setAllCommitments", allCommitments);
+      this.$store.commit("setAllConnections", allConnections);
+      this.$store.commit("setAllConnectRequest", allConnectRequest);
     },
   },
   mounted() {
@@ -469,9 +507,15 @@ export default {
 
       if (currentUser[0].connectRequestSend.length > 0)
         this.sentRequests = [...currentUser[0].connectRequestSend];
-    } else {
-      setTimeout(() => {
-        currentUser = this.$store.getters.getPerson;
+    }
+  },
+  watch: {
+    accepted_id: function () {
+      this.connectedPerson.push(this.accepted_id);
+    },
+    "$store.state.notifications": function () {
+      let currentUser = this.$store.getters.getPerson;
+      if (currentUser.length > 0) {
         currentUser[0].allConnections.forEach((item) => {
           if (item.connectedWith.length > 0)
             this.connectedPerson.push(...item.connectedWith);
@@ -479,14 +523,7 @@ export default {
 
         if (currentUser[0].connectRequestSend.length > 0)
           this.sentRequests = [...currentUser[0].connectRequestSend];
-
-        console.log(this.sentRequests);
-      }, 6000);
-    }
-  },
-  watch: {
-    accepted_id: function () {
-      this.connectedPerson.push(this.accepted_id);
+      }
     },
   },
 };

@@ -309,6 +309,7 @@ export default {
       });
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
+      this.updateDB();
     },
     handleReplicate(commitmentID) {
       this.person[this.dialogPersonIndex].allCommitments.forEach((item) => {
@@ -326,6 +327,7 @@ export default {
       });
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
+      this.updateDB();
     },
     handleSeen() {
       if (this.person[this.dialogPersonIndex].commitments > 0) {
@@ -340,6 +342,7 @@ export default {
           "setIndividual",
           this.person[this.dialogPersonIndex]
         );
+        this.updateDB();
       }
     },
     nextPage() {
@@ -391,11 +394,45 @@ export default {
       person.connections = person.allConnections.length;
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
+      this.updateDB();
       console.log(currentUser);
     },
     fetchImage() {
       console.log("fetching image");
       return "https://cdn.vuetifyjs.com/images/john.jpg";
+    },
+    updateDB() {
+      let allCommitments = [];
+      let allConnections = [];
+      let allConnectRequest = [];
+
+      let allPeople = this.$store.getters.getPeople;
+
+      allPeople.forEach((peep) => {
+        allCommitments.push(peep.allCommitments);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [...peep.allConnections];
+        arr.push(peep.id);
+        allConnections.push(arr);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [];
+        peep.connectRequestSend.forEach((conn) => {
+          let connectReq = {
+            from: peep.id,
+            to: conn,
+          };
+          arr.push(connectReq);
+        });
+        arr.push(peep.id);
+        allConnectRequest.push(arr);
+      });
+      this.$store.commit("setAllCommitments", allCommitments);
+      this.$store.commit("setAllConnections", allConnections);
+      this.$store.commit("setAllConnectRequest", allConnectRequest);
     },
   },
   mounted() {

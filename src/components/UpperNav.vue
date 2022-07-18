@@ -84,7 +84,11 @@
                             </div>
                           </v-list-item-content>
 
-                          <v-list-item-avatar class="mt-2" size="45" color="grey">
+                          <v-list-item-avatar
+                            class="mt-2"
+                            size="45"
+                            color="grey"
+                          >
                             <span
                               v-if="peep.image_id === null"
                               class="white--text text-h5"
@@ -197,6 +201,8 @@ export default {
       this.notifications -= 1;
       this.$store.commit("setNotifications", this.notifications);
 
+      this.updateDB();
+
       this.$emit("accepted", person.id);
     },
     declined(peep) {
@@ -219,10 +225,45 @@ export default {
       this.notifications -= 1;
       console.log(this.notifications);
       this.$store.commit("setNotifications", this.notifications);
+
+      this.updateDB();
     },
     fetchImage() {
       console.log("fetching image");
       return "https://cdn.vuetifyjs.com/images/john.jpg";
+    },
+    updateDB() {
+      let allCommitments = [];
+      let allConnections = [];
+      let allConnectRequest = [];
+
+      let allPeople = this.$store.getters.getPeople;
+
+      allPeople.forEach((peep) => {
+        allCommitments.push(peep.allCommitments);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [...peep.allConnections];
+        arr.push(peep.id);
+        allConnections.push(arr);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [];
+        peep.connectRequestSend.forEach((conn) => {
+          let connectReq = {
+            from: peep.id,
+            to: conn,
+          };
+          arr.push(connectReq);
+        });
+        arr.push(peep.id);
+        allConnectRequest.push(arr);
+      });
+      this.$store.commit("setAllCommitments", allCommitments);
+      this.$store.commit("setAllConnections", allConnections);
+      this.$store.commit("setAllConnectRequest", allConnectRequest);
     },
   },
   mounted() {

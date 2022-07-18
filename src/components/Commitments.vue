@@ -226,6 +226,8 @@ export default {
       }
       console.log("deleted commitment");
       this.$store.commit("setIndividual", this.person);
+
+      this.updateDB()
     },
     newCommitment() {
       this.newCommit = true;
@@ -269,6 +271,40 @@ export default {
       }
       this.$store.commit("setIndividual", this.person);
       this.dialog = false;
+      this.updateDB()
+    },
+    updateDB() {
+      let allCommitments = [];
+      let allConnections = [];
+      let allConnectRequest = [];
+
+      let allPeople = this.$store.getters.getPeople;
+
+      allPeople.forEach((peep) => {
+        allCommitments.push(peep.allCommitments);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [...peep.allConnections];
+        arr.push(peep.id);
+        allConnections.push(arr);
+      });
+
+      allPeople.forEach((peep) => {
+        let arr = [];
+        peep.connectRequestSend.forEach((conn) => {
+          let connectReq = {
+            from: peep.id,
+            to: conn,
+          };
+          arr.push(connectReq);
+        });
+        arr.push(peep.id);
+        allConnectRequest.push(arr);
+      });
+      this.$store.commit("setAllCommitments", allCommitments);
+      this.$store.commit("setAllConnections", allConnections);
+      this.$store.commit("setAllConnectRequest", allConnectRequest);
     },
   },
   mounted() {
