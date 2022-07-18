@@ -22,8 +22,8 @@
                   <v-btn icon class="mr-12" v-bind="attrs" v-on="on">
                     <v-badge
                       color="cyan"
-                      v-if="notification > 0"
-                      :content="notification"
+                      v-if="notifications > 0"
+                      :content="notifications"
                       overlap
                       bordered
                     >
@@ -84,7 +84,7 @@
                             </div>
                           </v-list-item-content>
 
-                          <v-list-item-avatar size="50" color="grey">
+                          <v-list-item-avatar class="mt-2" size="45" color="grey">
                             <span
                               v-if="peep.image_id === null"
                               class="white--text text-h5"
@@ -99,6 +99,17 @@
                               alt="USER IMAGE"
                             />
                           </v-list-item-avatar>
+                          <div>
+                            <hr
+                              style="
+                                border: 1px #ddd solid;
+                                width: 100%;
+                                position: absolute;
+                                bottom: 0;
+                                left: 0;
+                              "
+                            />
+                          </div>
                         </v-list-item>
                       </v-card>
                     </v-list-item>
@@ -110,9 +121,13 @@
             </div>
           </template>
 
-          <span class="font-sh mr-4">Shubham Kumar</span>
+          <span class="font-sh mr-4">{{ this.user.name }}</span>
           <v-avatar color="cyan" size="40">
-            <span class="white--text font-h">SK</span>
+            <span v-if="user.image_id === null" class="white--text text-h6">{{
+              this.user.name.split(" ")[0].substring(0, 1) +
+              this.user.name.split(" ")[1].substring(0, 1)
+            }}</span>
+            <img v-else :src="fetchImage(user.image_id)" alt="USER IMAGE" />
           </v-avatar>
         </v-toolbar>
       </v-card>
@@ -124,7 +139,7 @@
 export default {
   data() {
     return {
-      notification: 0,
+      notifications: 0,
       menu: false,
       person: [],
       location_state: [
@@ -142,6 +157,10 @@ export default {
       ],
       location_country: ["INDIA"],
       UID: "",
+      user: {
+        name: "Unknown User",
+        image_id: null,
+      },
     };
   },
   methods: {
@@ -173,7 +192,8 @@ export default {
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
 
-      this.person.splice(this.person.indexOf(person), 1);
+      this.person = [];
+      this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
       this.$store.commit("setNotifications", this.notifications);
 
@@ -194,9 +214,10 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
-
-      this.person.splice(this.person.indexOf(person), 1);
+      this.person = [];
+      this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
+      console.log(this.notifications);
       this.$store.commit("setNotifications", this.notifications);
     },
     fetchImage() {
@@ -209,8 +230,9 @@ export default {
   },
   watch: {
     "$store.state.notifications": function () {
-      this.notification = this.$store.state.notifications;
+      this.notifications = Number(this.$store.state.notifications);
       let currentUser = this.$store.getters.getPerson[0];
+      this.user = currentUser;
       let allRequestRecivedID = currentUser.connectRequestReceived;
       this.$store.getters.getPeople.forEach((person) => {
         if (allRequestRecivedID.includes(person.id)) {

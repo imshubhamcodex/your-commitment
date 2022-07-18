@@ -200,6 +200,30 @@ export default {
       this.person.replicatedCount = commitment.replicated.length;
       this.person.sharedCount = commitment.shared.length;
 
+      let allPeep = this.$store.getters.getPeople;
+
+      let modifiedPeep = null;
+      let isFound = false;
+
+      allPeep.forEach((peep) => {
+        peep.allCommitments.forEach((commit) => {
+          if (commit.replicated.includes(this.person.id)) {
+            commit.replicated.splice(
+              commit.replicated.indexOf(this.person.id),
+              1
+            );
+            isFound = true;
+          }
+        });
+        if (isFound) {
+          modifiedPeep = peep;
+          return;
+        }
+      });
+
+      if (isFound) {
+        this.$store.commit("setIndividual", modifiedPeep);
+      }
       console.log("deleted commitment");
       this.$store.commit("setIndividual", this.person);
     },

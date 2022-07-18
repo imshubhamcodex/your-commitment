@@ -388,7 +388,7 @@ export default {
           }
         }
       });
-
+      person.connections = person.allConnections.length;
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
       console.log(currentUser);

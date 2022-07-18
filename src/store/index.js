@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     openTab: "DASHBOARD",
-    UID: "too4c",
+    UID: "f4snii",
     people: [],
     notifications: 0,
   },
@@ -106,7 +106,7 @@ export default new Vuex.Store({
       });
     },
     setNotifications(state, payload) {
-      state.notifications = payload;
+      state.notifications = Number(payload);
     },
   },
 });

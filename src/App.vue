@@ -9,7 +9,7 @@
 <script>
 import firebase from "firebase";
 export default {
-  mounted() {
+  async created() {
     // this.$vuetify.theme.dark = false;
     // console.log(this.$vuetify.theme.dark);
     // const UID = (Math.random() + 1).toString(36).substring(7);
@@ -125,13 +125,13 @@ export default {
     //   });
 
     // let UID = "f4snii";
-    firebase
+    await firebase
       .firestore()
       .collection("USERS")
       .get()
       .then((res) => {
         res.docs.forEach((doc) => {
-          console.log(doc.data());
+          // console.log(doc.data());
           this.$store.commit("setPeople", doc.data());
         });
       })
@@ -139,13 +139,13 @@ export default {
         console.log("Error Getting USERS:", error);
       });
 
-    firebase
+    await firebase
       .firestore()
       .collection("COMMITMENTS")
       .get()
       .then((res) => {
         res.docs.forEach((doc) => {
-          console.log(doc.data().COMMITMENTS);
+          // console.log(doc.data().COMMITMENTS);
           this.$store.commit("setCommitment", doc.data().COMMITMENTS);
         });
       })
@@ -153,13 +153,13 @@ export default {
         console.log("Error Getting COMMITMENTS:", error);
       });
 
-    firebase
+    await firebase
       .firestore()
       .collection("CONNECTIONS")
       .get()
       .then((res) => {
         res.docs.forEach((doc) => {
-          console.log(doc.data().CONNECTIONS);
+          // console.log(doc.data().CONNECTIONS);
           this.$store.commit("setConnection", doc.data().CONNECTIONS);
         });
       })
@@ -167,13 +167,13 @@ export default {
         console.log("Error Getting CONNECTIONS:", error);
       });
 
-    firebase
+    await firebase
       .firestore()
       .collection("CONNECT_REQ")
       .get()
       .then((res) => {
         res.docs.forEach((doc) => {
-          console.log(doc.data().CONNECT_REQ);
+          // console.log(doc.data().CONNECT_REQ);
           this.$store.commit("setConnectionRequest", doc.data().CONNECT_REQ);
         });
       })

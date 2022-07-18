@@ -33,10 +33,7 @@
                   class="mx-auto"
                   max-width="344"
                   outlined
-                  v-if="
-                    k + (n - 1) * 3 <= person.length &&
-                    !connectedPerson.includes(person[k + (n - 1) * 3 - 1].id)
-                  "
+                  v-if="k + (n - 1) * 3 <= person.length"
                   @click="viewPerson(k + (n - 1) * 3 - 1)"
                   :key="dialog_content_key + 'vcard' + k + (n - 1) * 3"
                 >
@@ -110,11 +107,17 @@
                     @click.stop="sendRequest(k + (n - 1) * 3 - 1)"
                     x-small
                     :dark="
-                      person[k + (n - 1) * 3 - 1].id === UID ? false : true
+                      person[k + (n - 1) * 3 - 1].id === UID ||
+                      connectedPerson.includes(person[k + (n - 1) * 3 - 1].id)
+                        ? false
+                        : true
                     "
                     color="cyan"
                     width="100%"
-                    :disabled="person[k + (n - 1) * 3 - 1].id === UID"
+                    :disabled="
+                      person[k + (n - 1) * 3 - 1].id === UID ||
+                      connectedPerson.includes(person[k + (n - 1) * 3 - 1].id)
+                    "
                     :style="{
                       display: sentRequests.includes(
                         person[k + (n - 1) * 3 - 1].id
@@ -127,6 +130,10 @@
                       {{
                         person[k + (n - 1) * 3 - 1].id === UID
                           ? "THIS IS YOU"
+                          : connectedPerson.includes(
+                              person[k + (n - 1) * 3 - 1].id
+                            )
+                          ? "ALREADY CONNECTED"
                           : "CONNECT"
                       }}
                     </span>
@@ -310,7 +317,6 @@ export default {
       this.dialogPersonIndex = index;
       this.dialog = true;
       this.handleSeen();
-      console.log(this.person[index].id);
     },
     closeDialog() {
       this.dialog = false;
@@ -321,7 +327,6 @@ export default {
         "none";
       document.getElementById(`${this.person[index].id}cancle`).style.display =
         "block";
-      console.log("send request", this.person[index]);
 
       const conn = [
         {
@@ -352,8 +357,6 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
-
-      console.log(this.$store.state.people);
     },
     nextPage() {
       this.currentPage++;
@@ -370,12 +373,11 @@ export default {
         if (item.commitment_id === commitmentID) {
           if (item.stars.includes(this.UID)) {
             item.stars.splice(item.stars.indexOf(this.UID), 1);
-            console.log("unstar");
+
             this.person[this.dialogPersonIndex].starsCount -= 1;
           } else {
             item.stars.push(this.UID);
             this.person[this.dialogPersonIndex].starsCount += 1;
-            console.log("star");
           }
         }
       });
@@ -383,19 +385,49 @@ export default {
       this.dialog_content_key += 1;
     },
     handleReplicate(commitmentID) {
+      let toCopy = false;
       this.person[this.dialogPersonIndex].allCommitments.forEach((item) => {
         if (item.commitment_id === commitmentID) {
           if (item.replicated.includes(this.UID)) {
             item.replicated.splice(item.replicated.indexOf(this.UID), 1);
-            console.log("unreplicate");
+
             this.person[this.dialogPersonIndex].replicatedCount -= 1;
           } else {
             item.replicated.push(this.UID);
-            console.log("replicate");
+            toCopy = item;
+
             this.person[this.dialogPersonIndex].replicatedCount += 1;
           }
         }
       });
+      let currentUser = this.$store.getters.getPerson[0];
+      currentUser.allCommitments.forEach((item) => {
+        if (item.commitment_id === commitmentID) {
+          currentUser.allCommitments.splice(
+            currentUser.allCommitments.indexOf(item),
+            1
+          );
+        }
+      });
+
+      if (toCopy) {
+        let copyCommit = {
+          title: toCopy.title,
+          description: "",
+          upadatedOn: Date.now(),
+          stars: [],
+          seen: [],
+          replicated: [],
+          shared: [],
+          id: this.UID,
+          commitment_id: toCopy.commitment_id,
+        };
+        currentUser.allCommitments.push(copyCommit);
+      }
+
+      currentUser.commitments = currentUser.allCommitments.length;
+
+      this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
       this.dialog_content_key += 1;
     },
@@ -404,7 +436,7 @@ export default {
         this.person[this.dialogPersonIndex].allCommitments.forEach((item) => {
           if (!item.seen.includes(this.UID)) {
             item.seen.push(this.UID);
-            console.log("seen");
+
             this.person[this.dialogPersonIndex].seenCount += 1;
           }
         });
@@ -437,13 +469,23 @@ export default {
 
       if (currentUser[0].connectRequestSend.length > 0)
         this.sentRequests = [...currentUser[0].connectRequestSend];
-    }
+    } else {
+      setTimeout(() => {
+        currentUser = this.$store.getters.getPerson;
+        currentUser[0].allConnections.forEach((item) => {
+          if (item.connectedWith.length > 0)
+            this.connectedPerson.push(...item.connectedWith);
+        });
 
-    console.log(this.sentRequests);
+        if (currentUser[0].connectRequestSend.length > 0)
+          this.sentRequests = [...currentUser[0].connectRequestSend];
+
+        console.log(this.sentRequests);
+      }, 6000);
+    }
   },
   watch: {
     accepted_id: function () {
-      console.log(this.accepted_id);
       this.connectedPerson.push(this.accepted_id);
     },
   },
