@@ -28,6 +28,7 @@ export default new Vuex.Store({
       const data = {
         id: payload.id,
         name: payload.name,
+        email: payload.email,
         image_id: payload.image_id,
         location_state_index: payload.state_index,
         location_country_index: payload.country_index,
@@ -37,6 +38,7 @@ export default new Vuex.Store({
         seenCount: 0,
         replicatedCount: 0,
         sharedCount: 0,
+        last_active: 0,
         allCommitments: [],
         allConnections: [],
         connectRequestSend: [],
@@ -111,6 +113,14 @@ export default new Vuex.Store({
         }
       });
     },
+    setLastActive(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === state.UID) {
+          person.last_active = payload;
+          return;
+        }
+      });
+    },
     setNotifications(state, payload) {
       state.notifications = Number(payload);
     },
@@ -122,6 +132,9 @@ export default new Vuex.Store({
     },
     setAllConnectRequest(state, payload) {
       state.allConnectRequest = payload;
+    },
+    setUID(state, payload) {
+      state.UID = payload;
     },
   },
 });

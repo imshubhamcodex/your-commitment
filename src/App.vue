@@ -9,12 +9,11 @@
 <script>
 import firebase from "firebase";
 export default {
-  async created() {
+  created() {
     // this.$vuetify.theme.dark = false;
     // console.log(this.$vuetify.theme.dark);
     // const UID = (Math.random() + 1).toString(36).substring(7);
-
-    let UID = "f4snii";
+    // let UID = "too4c";
     // firebase
     //   .firestore()
     //   .collection("USERS")
@@ -29,11 +28,11 @@ export default {
     //     allConnections: [],
     //     connectRequestSend: [],
     //     connectRequestRecived: [],
+    //     email:"edwssm777@gmail.com"
     //   })
     //   .catch((error) => {
     //     console.log("Error Saving user:", error);
     //   });
-
     // firebase
     //   .firestore()
     //   .collection("COMMITMENTS")
@@ -67,7 +66,6 @@ export default {
     //   .catch((error) => {
     //     console.log("Error Saving Commitment:", error);
     //   });
-
     // firebase
     //   .firestore()
     //   .collection("CONNECTIONS")
@@ -89,7 +87,6 @@ export default {
     //   .catch((error) => {
     //     console.log("Error Saving Connections:", error);
     //   });
-
     // firebase
     //   .firestore()
     //   .collection("CONNECT_REQ")
@@ -105,7 +102,6 @@ export default {
     //   .catch((error) => {
     //     console.log("Error Sending Connect Request:", error);
     //   });
-
     // firebase
     //   .firestore()
     //   .collection("SUPPORT")
@@ -123,66 +119,24 @@ export default {
     //   .catch((error) => {
     //     console.log("Error Saving Connections:", error);
     //   });
-
-    // let UID = "f4snii";
-    await firebase
-      .firestore()
-      .collection("USERS")
-      .get()
-      .then((res) => {
-        res.docs.forEach((doc) => {
-          // console.log(doc.data());
-          this.$store.commit("setPeople", doc.data());
-        });
-      })
-      .catch((error) => {
-        console.log("Error Getting USERS:", error);
-      });
-
-    await firebase
-      .firestore()
-      .collection("COMMITMENTS")
-      .get()
-      .then((res) => {
-        res.docs.forEach((doc) => {
-          // console.log(doc.data().COMMITMENTS);
-          this.$store.commit("setCommitment", doc.data().COMMITMENTS);
-        });
-      })
-      .catch((error) => {
-        console.log("Error Getting COMMITMENTS:", error);
-      });
-
-    await firebase
-      .firestore()
-      .collection("CONNECTIONS")
-      .get()
-      .then((res) => {
-        res.docs.forEach((doc) => {
-          // console.log(doc.data().CONNECTIONS);
-          this.$store.commit("setConnection", doc.data().CONNECTIONS);
-        });
-      })
-      .catch((error) => {
-        console.log("Error Getting CONNECTIONS:", error);
-      });
-
-    await firebase
-      .firestore()
-      .collection("CONNECT_REQ")
-      .get()
-      .then((res) => {
-        res.docs.forEach((doc) => {
-          // console.log(doc.data().CONNECT_REQ);
-          this.$store.commit("setConnectionRequest", doc.data().CONNECT_REQ);
-        });
-      })
-      .catch((error) => {
-        console.log("Error Getting CONNECTIONS_REQUEST:", error);
-      });
+    // firebase
+    //   .firestore()
+    //   .collection("LAST_ACTIVE")
+    //   .doc(UID)
+    //   .set(
+    //     {
+    //       active: Date.now(),
+    //     },
+    //     { merge: true }
+    //   )
+    //   .catch((error) => {
+    //     console.log("Error Saving LAST ACTIVE:", error);
+    //   });
   },
   watch: {
     "$store.state.allCommitments": function () {
+      if(!this.$store.state.UID) return;
+
       let peep = this.$store.getters.getPerson[0];
       let commintments = peep.allCommitments;
       firebase
@@ -200,6 +154,8 @@ export default {
         });
     },
     "$store.state.allConnections": function () {
+      if(!this.$store.state.UID) return;
+
       let allConnections = this.$store.state.allConnections;
       allConnections.forEach((connection) => {
         let ID = connection[connection.length - 1];
@@ -224,6 +180,8 @@ export default {
       });
     },
     "$store.state.allConnectRequest": function () {
+      if(!this.$store.state.UID) return;
+      
       let allConnectRequest = this.$store.state.allConnectRequest;
       allConnectRequest.forEach((conn) => {
         let ID = conn[conn.length - 1];

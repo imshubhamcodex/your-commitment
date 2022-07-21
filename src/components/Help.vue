@@ -6,6 +6,7 @@
         <v-container class="mt-8">
           <div style="max-width: 600px; display: block; margin: auto auto">
             <v-text-field
+              class="g-animi-help-card"
               v-model="email"
               label="Your Email"
               outlined
@@ -15,6 +16,7 @@
             <br />
             <br />
             <v-textarea
+              class="g-animi-help-card"
               outlined
               clearable
               label="What's on your mind?"
@@ -23,7 +25,7 @@
             <v-btn
               :disabled="email.trim() == '' || issue.trim() == ''"
               color="blue"
-              class="ma-2 white--text"
+              class="ma-2 white--text g-animi-help-card"
               style="float: right"
               @click="sendIssue"
             >
@@ -38,6 +40,7 @@
 </template>
 
 <script>
+import gsap from "gsap";
 export default {
   data() {
     return {
@@ -53,7 +56,35 @@ export default {
       console.log("issue sent");
     },
   },
+  mounted() {
+    let inv = setInterval(() => {
+      if (document.getElementsByClassName("g-animi-help-card").length > 0) {
+        clearInterval(inv);
+        gsap.fromTo(
+          ".g-animi-help-card",
+          {
+            duration: 0.7,
+            opacity: 0,
+            y: 20,
+            ease: "back.out",
+            stagger: 0.2,
+          },
+          {
+            duration: 0.7,
+            opacity: 1,
+            y: 0,
+            ease: "back.out",
+            stagger: 0.2,
+          }
+        );
+      }
+    }, 50);
+  },
 };
 </script>
 
-<style></style>
+<style scoped>
+.g-animi-help-card {
+  opacity: 0;
+}
+</style>

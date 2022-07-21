@@ -19,7 +19,7 @@
         id="dashboard-tab"
         @click="openTab('dashboard')"
         link
-        class="mt-4"
+        class="mt-1"
       >
         <v-list-item-icon>
           <v-icon>mdi-view-dashboard</v-icon>
@@ -67,11 +67,20 @@
           ><span class="font-shs">Support</span></v-list-item-title
         >
       </v-list-item>
+
+      <v-list-item link class="mt-4" @click.stop="donate">
+        <v-list-item-icon>
+          <v-icon>mdi-gift</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="ml-n5"
+          ><span class="font-shs">Donate</span></v-list-item-title
+        >
+      </v-list-item>
     </v-list>
 
     <v-list nav dense id="lower-list">
       <v-list-item id="power-btn">
-        <v-btn fab dark small color="cyan">
+        <v-btn @click="signOut" fab dark small color="cyan">
           <v-icon dark> mdi-power </v-icon>
         </v-btn>
       </v-list-item>
@@ -80,6 +89,7 @@
 </template>
 
 <script>
+import firebase from "firebase";
 export default {
   methods: {
     openTab(tab) {
@@ -125,6 +135,58 @@ export default {
           "#5CFFFF";
       }
     },
+    signOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$store.replaceState({
+            openTab: "DASHBOARD",
+            UID: false,
+            people: [],
+            notifications: -1,
+            allCommitments: [],
+            allConnections: [],
+            allConnectRequest: [],
+          });
+
+          this.$router.replace("/");
+        })
+        .catch((err) => {
+          console.log("Error while sign out" + err);
+        });
+    },
+    donate() {
+      this.makePayment();
+    },
+    makePayment() {
+      const options = {
+        key: process.env.VUE_APP_RAZORPAY_KEY_ID,
+        amount: 50 * 100, // 100 paise = INR 1
+        name: "Commitment",
+        description: "Donating LOVE",
+        image: "https://tinyurl.com/4bcy9a3y",
+        handler: (response) => this.onPaymentSuccess(response),
+        prefill: {
+          name: this.$store.getters.getPerson[0].name,
+          id: this.$store.getters.getPerson[0].id,
+          email: this.$store.getters.getPerson[0].email,
+          contact: 8018439472,
+        },
+        theme: {
+          color: "#651FFF",
+        },
+      };
+      const rzp = new Razorpay(options);
+      rzp.open();
+      rzp.on("payment.failed", (error) => this.onPaymentFailure(error));
+    },
+    onPaymentSuccess(response) {
+      console.log("Success" + response);
+    },
+    onPaymentFailure(response) {
+      console.log("Failed" + response);
+    },
   },
   mounted() {
     if (this.$store.getters.getOpenTab === "DASHBOARD") {
@@ -140,7 +202,7 @@ export default {
   text-align: center;
   margin: auto auto;
   display: block;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 #card {
   width: 15%;
@@ -148,6 +210,6 @@ export default {
   float: left;
 }
 #lower-list {
-  margin-top: 120px;
+  margin-top: 70px;
 }
 </style>

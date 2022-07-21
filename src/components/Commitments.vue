@@ -21,7 +21,7 @@
           <template v-else>
             <v-expansion-panels focusable>
               <v-expansion-panel
-                class="mt-3"
+                class="mt-3 g-animi-commitment-card"
                 v-for="(item, i) in commitments"
                 :key="i + 'commintments'"
               >
@@ -175,6 +175,7 @@
 </template>
 
 <script>
+import gsap from "gsap";
 export default {
   data() {
     return {
@@ -310,8 +311,35 @@ export default {
   mounted() {
     this.person = this.$store.getters.getPerson[0];
     this.commitments = this.person.allCommitments;
+
+    let inv = setInterval(() => {
+      if (document.getElementsByClassName("g-animi-commitment-card").length > 0) {
+        clearInterval(inv);
+        gsap.fromTo(
+          ".g-animi-commitment-card",
+          {
+            duration: 0.7,
+            opacity: 0,
+            y: 20,
+            ease: "back.out",
+            stagger: 0.2,
+          },
+          {
+            duration: 0.7,
+            opacity: 1,
+            y: 0,
+            ease: "back.out",
+            stagger: 0.2,
+          }
+        );
+      }
+    }, 50);
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.g-animi-commitment-card{
+  opacity: 0;
+}
+</style>

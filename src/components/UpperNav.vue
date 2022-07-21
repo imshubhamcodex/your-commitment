@@ -7,8 +7,8 @@
             this.$store.getters.getOpenTab
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-icon class="mr-1">mdi-cellphone-text</v-icon>
-          <span class="grey--text font-shs mr-10">29 Aug 2019</span>
+          <v-icon class="mr-1" color="green">mdi-cellphone-text</v-icon>
+          <span class="grey--text font-shs mr-10">{{ last_active }}</span>
           <template>
             <div class="text-center">
               <v-menu
@@ -144,20 +144,46 @@ export default {
   data() {
     return {
       notifications: 0,
+      last_active: 0,
       menu: false,
       person: [],
       location_state: [
+        "Andhra",
+        "Arunachal",
+        "Assam",
         "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
         "Haryana",
-        "J&K",
+        "Himachal",
+        "J & K",
+        "Jharkhand",
         "Karnataka",
         "Kerala",
         "Madhya Pradesh",
         "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
         "Punjab",
         "Rajasthan",
+        "Sikkim",
         "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttarakhand",
         "Uttar Pradesh",
+        "West Bengal",
+        "Andaman",
+        "Chandigarh",
+        "Dadra Nagar Haveli",
+        "Daman & Diu",
+        "Delhi",
+        "Lakshadweep",
+        "Puducherry",
       ],
       location_country: ["INDIA"],
       UID: "",
@@ -274,6 +300,9 @@ export default {
       this.notifications = Number(this.$store.state.notifications);
       let currentUser = this.$store.getters.getPerson[0];
       this.user = currentUser;
+      this.last_active = new Date(currentUser.last_active)
+        .toString()
+        .substring(4, 15);
       let allRequestRecivedID = currentUser.connectRequestReceived;
       this.$store.getters.getPeople.forEach((person) => {
         if (allRequestRecivedID.includes(person.id)) {

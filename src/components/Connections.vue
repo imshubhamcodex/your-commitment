@@ -38,7 +38,7 @@
                 <template>
                   <v-card
                     v-if="k + (n - 1) * 3 <= person.length"
-                    class="mx-auto"
+                    class="mx-auto g-animi-connection-card"
                     max-width="344"
                     outlined
                     style="position: relative"
@@ -256,23 +256,49 @@
 </template>
 
 <script>
+import gsap from "gsap";
 export default {
   data() {
     return {
       person: [],
       connections: [],
       location_state: [
+        "Andhra",
+        "Arunachal",
+        "Assam",
         "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
         "Haryana",
-        "J&K",
+        "Himachal",
+        "J & K",
+        "Jharkhand",
         "Karnataka",
         "Kerala",
         "Madhya Pradesh",
         "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
         "Punjab",
         "Rajasthan",
+        "Sikkim",
         "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttarakhand",
         "Uttar Pradesh",
+        "West Bengal",
+        "Andaman",
+        "Chandigarh",
+        "Dadra Nagar Haveli",
+        "Daman & Diu",
+        "Delhi",
+        "Lakshadweep",
+        "Puducherry",
       ],
       location_country: ["INDIA"],
       currentPage: 1,
@@ -448,9 +474,36 @@ export default {
         }
       });
     });
-    console.log(this.connections);
+    
+
+    let inv = setInterval(() => {
+      if (document.getElementsByClassName("g-animi-connection-card").length > 0) {
+        clearInterval(inv);
+        gsap.fromTo(
+          ".g-animi-connection-card",
+          {
+            duration: 0.7,
+            opacity: 0,
+            x: -20,
+            ease: "back.out",
+            stagger: 0.2,
+          },
+          {
+            duration: 0.7,
+            opacity: 1,
+            x: 0,
+            ease: "back.out",
+            stagger: 0.2,
+          }
+        );
+      }
+    }, 50);
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.g-animi-connection-card{
+  opacity: 0;
+}
+</style>

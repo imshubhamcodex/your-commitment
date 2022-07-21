@@ -30,7 +30,7 @@
             <v-col v-for="k in 3" :key="k + 'col-dashboard'">
               <template>
                 <v-card
-                  class="mx-auto"
+                  class="mx-auto g-animi-dash-card"
                   max-width="344"
                   outlined
                   v-if="k + (n - 1) * 3 <= person.length"
@@ -283,6 +283,7 @@
 </template>
 
 <script>
+import gsap from "gsap";
 export default {
   props: ["accepted_id"],
   data() {
@@ -291,17 +292,42 @@ export default {
       dialogPersonIndex: -1,
       currentPage: 1,
       location_state: [
+        "Andhra",
+        "Arunachal",
+        "Assam",
         "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
         "Haryana",
-        "J&K",
+        "Himachal",
+        "J & K",
+        "Jharkhand",
         "Karnataka",
         "Kerala",
         "Madhya Pradesh",
         "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
         "Punjab",
         "Rajasthan",
+        "Sikkim",
         "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttarakhand",
         "Uttar Pradesh",
+        "West Bengal",
+        "Andaman",
+        "Chandigarh",
+        "Dadra Nagar Haveli",
+        "Daman & Diu",
+        "Delhi",
+        "Lakshadweep",
+        "Puducherry",
       ],
       location_country: ["INDIA"],
       person: [],
@@ -508,6 +534,29 @@ export default {
       if (currentUser[0].connectRequestSend.length > 0)
         this.sentRequests = [...currentUser[0].connectRequestSend];
     }
+
+    let inv = setInterval(() => {
+      if (document.getElementsByClassName("g-animi-dash-card").length > 0) {
+        clearInterval(inv);
+        gsap.fromTo(
+          ".g-animi-dash-card",
+          {
+            duration: 0.7,
+            opacity: 0,
+            x: -20,
+            ease: "back.out",
+            stagger: 0.2,
+          },
+          {
+            duration: 0.7,
+            opacity: 1,
+            x: 0,
+            ease: "back.out",
+            stagger: 0.2,
+          }
+        );
+      }
+    }, 50);
   },
   watch: {
     accepted_id: function () {
@@ -532,5 +581,8 @@ export default {
 <style scoped>
 .cancle-connect-btn {
   display: none;
+}
+.g-animi-dash-card {
+  opacity: 0;
 }
 </style>
