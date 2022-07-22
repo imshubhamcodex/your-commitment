@@ -5,7 +5,7 @@
       <v-btn
         @click="newCommitment"
         color="blue"
-        class="white--text action-btn mr-0"
+        class="white--text action-btn"
       >
         New Commitment
         <v-icon right dark> mdi-plus-circle </v-icon>
@@ -341,5 +341,12 @@ export default {
 <style scoped>
 .g-animi-commitment-card{
   opacity: 0;
+}
+
+@media(max-width:500px) {
+  .action-btn{
+    margin-top:20px;
+    margin-right:17px !important;
+  }
 }
 </style>
