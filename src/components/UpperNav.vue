@@ -3,7 +3,7 @@
     <template>
       <v-card id="card-nav">
         <v-toolbar flat class="limit-height">
-          <v-toolbar-title class="font-h">{{
+          <v-toolbar-title id="top-head" class="font-h">{{
             this.$store.getters.getOpenTab
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -215,14 +215,14 @@ export default {
       person.allConnections.push({
         connectedOn: Date.now(),
         connectedWith: [currentUser.id],
-        id: this.UID,
+        id: person.id,
       });
       person.connections += 1;
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
 
-      this.person = [];
+      
       this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
       this.$store.commit("setNotifications", this.notifications);
@@ -246,7 +246,7 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
-      this.person = [];
+      
       this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
       console.log(this.notifications);
@@ -254,9 +254,9 @@ export default {
 
       this.updateDB();
     },
-    fetchImage() {
+    fetchImage(img) {
       console.log("fetching image");
-      return "https://cdn.vuetifyjs.com/images/john.jpg";
+      return img;
     },
     updateDB() {
       let allCommitments = [];
@@ -294,22 +294,17 @@ export default {
   },
   mounted() {
     this.UID = this.$store.getters.getUID;
-  },
-  watch: {
-    "$store.state.notifications": function () {
-      this.notifications = Number(this.$store.state.notifications);
-      let currentUser = this.$store.getters.getPerson[0];
-      this.user = currentUser;
-      this.last_active = new Date(currentUser.last_active)
-        .toString()
-        .substring(4, 15);
-      let allRequestRecivedID = currentUser.connectRequestReceived;
-      this.$store.getters.getPeople.forEach((person) => {
-        if (allRequestRecivedID.includes(person.id)) {
-          this.person.push(person);
-        }
-      });
-    },
+    this.user = this.$store.getters.getPerson[0];
+    this.last_active = new Date(this.user.last_active)
+      .toString()
+      .substring(4, 15);
+    let allRequestRecivedID = this.user.connectRequestReceived;
+    this.notifications = allRequestRecivedID.length;
+    this.$store.getters.getPeople.forEach((person) => {
+      if (allRequestRecivedID.includes(person.id)) {
+        this.person.push(person);
+      }
+    });
   },
 };
 </script>
@@ -319,5 +314,11 @@ export default {
   width: 85%;
   float: right;
   zoom: 0.85;
+}
+
+@media(max-width:480px){
+  #top-head{
+    display: none;
+  }
 }
 </style>

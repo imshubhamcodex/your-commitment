@@ -14,9 +14,9 @@
               type="email"
             ></v-text-field>
             <br />
-            <br />
+            <br id="br2" />
             <v-textarea
-              class="g-animi-help-card"
+              class="g-animi-help-card text-area"
               outlined
               clearable
               label="What's on your mind?"
@@ -86,5 +86,11 @@ export default {
 <style scoped>
 .g-animi-help-card {
   opacity: 0;
+}
+
+@media(max-width:500px) {
+  #br2{
+    display: none;
+  }
 }
 </style>

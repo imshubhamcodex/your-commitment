@@ -135,7 +135,7 @@ export default {
   },
   watch: {
     "$store.state.allCommitments": function () {
-      if(!this.$store.state.UID) return;
+      if (!this.$store.state.UID) return;
 
       let peep = this.$store.getters.getPerson[0];
       let commintments = peep.allCommitments;
@@ -154,7 +154,7 @@ export default {
         });
     },
     "$store.state.allConnections": function () {
-      if(!this.$store.state.UID) return;
+      if (!this.$store.state.UID) return;
 
       let allConnections = this.$store.state.allConnections;
       allConnections.forEach((connection) => {
@@ -180,8 +180,8 @@ export default {
       });
     },
     "$store.state.allConnectRequest": function () {
-      if(!this.$store.state.UID) return;
-      
+      if (!this.$store.state.UID) return;
+
       let allConnectRequest = this.$store.state.allConnectRequest;
       allConnectRequest.forEach((conn) => {
         let ID = conn[conn.length - 1];
@@ -240,5 +240,11 @@ export default {
   font-size: 15px;
   font-weight: 600;
   font-family: "Dosis", sans-serif;
+}
+
+@media (max-width: 500px) {
+  .font-h-big {
+    font-size: 30px;
+  }
 }
 </style>

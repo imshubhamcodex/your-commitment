@@ -1,8 +1,8 @@
 <template>
   <v-card id="card">
     <v-list class="mb-12 mt-2">
-      <v-list-item class="mt-n2">
-        <img
+      <v-list-item id="p-logo" class="mt-n2">
+        <img id="logo"
           src="../assets/logo.png"
           style="
             height: 100px;
@@ -211,5 +211,19 @@ export default {
 }
 #lower-list {
   margin-top: 70px;
+}
+
+@media(max-width:480px){
+  #p-logo{
+    padding-left:10px;
+  }
+  #logo{
+    zoom:0.3;
+    margin-top:5px !important;
+  }
+  #power-btn{
+    margin-left:-10px;
+    margin-top:70px;
+  }
 }
 </style>

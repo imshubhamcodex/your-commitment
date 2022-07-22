@@ -20,6 +20,7 @@
           type="password"
           v-model="password"
           :counter="20"
+          @keyup.enter="goForAuth"
         ></v-text-field>
 
         <p class="g-animi mt-3">Forgot Password ?</p>
@@ -96,24 +97,102 @@ export default {
   },
   methods: {
     goToSignup() {
-      //   this.$router.push("/signup");
+      this.$router.push("/signup");
     },
     goForAuth() {
       this.dialog = true;
       firebase
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
-        .then(() => {
+        .then(async () => {
           // Success
-          firebase
+          await firebase
             .firestore()
             .collection("USERS")
             .get()
             .then((res) => {
-              res.docs.forEach((doc) => {
+              res.docs.forEach(async (doc) => {
                 if (doc.data().email === this.email) {
-                  console.log(doc.data());
                   this.$store.commit("setUID", doc.data().id);
+                  let UID = this.$store.state.UID;
+                  await firebase
+                    .firestore()
+                    .collection("USERS")
+                    .get()
+                    .then((res) => {
+                      res.docs.forEach((doc) => {
+                        // console.log(doc.data());
+                        this.$store.commit("setPeople", doc.data());
+                      });
+                    })
+                    .catch((error) => {
+                      console.log("Error Getting USERS:", error);
+                    });
+
+                  await firebase
+                    .firestore()
+                    .collection("LAST_ACTIVE")
+                    .doc(UID)
+                    .get()
+                    .then((res) => {
+                      // console.log(res.data().active);
+                      this.$store.commit("setLastActive", res.data().active);
+                    })
+                    .catch((error) => {
+                      console.log("Error Getting LAST_ACTIVE:", error);
+                    });
+
+                  await firebase
+                    .firestore()
+                    .collection("COMMITMENTS")
+                    .get()
+                    .then((res) => {
+                      res.docs.forEach((doc) => {
+                        // console.log(doc.data().COMMITMENTS);
+                        this.$store.commit(
+                          "setCommitment",
+                          doc.data().COMMITMENTS
+                        );
+                      });
+                    })
+                    .catch((error) => {
+                      console.log("Error Getting COMMITMENTS:", error);
+                    });
+
+                  await firebase
+                    .firestore()
+                    .collection("CONNECTIONS")
+                    .get()
+                    .then((res) => {
+                      res.docs.forEach((doc) => {
+                        // console.log(doc.data().CONNECTIONS);
+                        this.$store.commit(
+                          "setConnection",
+                          doc.data().CONNECTIONS
+                        );
+                      });
+                    })
+                    .catch((error) => {
+                      console.log("Error Getting CONNECTIONS:", error);
+                    });
+
+                  await firebase
+                    .firestore()
+                    .collection("CONNECT_REQ")
+                    .get()
+                    .then((res) => {
+                      res.docs.forEach((doc) => {
+                        // console.log(doc.data().CONNECT_REQ);
+                        this.$store.commit(
+                          "setConnectionRequest",
+                          doc.data().CONNECT_REQ
+                        );
+                      });
+                    })
+                    .catch((error) => {
+                      console.log("Error Getting CONNECTIONS_REQUEST:", error);
+                    });
+
                   this.$router.replace("/home");
                   return;
                 }
@@ -121,6 +200,8 @@ export default {
             })
             .catch((error) => {
               alert("User details NOT found: " + error.message);
+              this.dialog = false;
+              return;
             });
         })
         .catch((error) => {
@@ -205,5 +286,14 @@ p {
   display: block;
   text-align: center;
   padding-bottom: 50px;
+}
+@media (max-width: 480px) {
+  #container {
+    width: 70%;
+  }
+  #container-bottom {
+    width: 70%;
+    margin-left: 15%;
+  }
 }
 </style>

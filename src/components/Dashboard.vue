@@ -20,32 +20,49 @@
         dark
         x-small
         color="blue"
-        :disabled="person.length < 6"
+        :disabled="
+          (person.length < 6 && innerWidth >= 500) ||
+          (person.length < 2 && innerWidth < 500)
+        "
       >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
       <template>
-        <v-container class="mt-8">
-          <v-row v-for="n in 2" :key="n + 'row-dashboard'" class="mx-auto">
-            <v-col v-for="k in 3" :key="k + 'col-dashboard'">
+        <v-container class="mt-8" id="card-container">
+          <v-row
+            v-for="n in innerWidth < 500 ? 1 : 2"
+            :key="n + 'row-dashboard'"
+            class="mx-auto"
+          >
+            <v-col
+              v-for="k in innerWidth < 500 ? 2 : 3"
+              :key="k + 'col-dashboard'"
+            >
               <template>
                 <v-card
-                  class="mx-auto g-animi-dash-card"
+                  class="mx-auto g-animi-dash-card people-card"
                   max-width="344"
                   outlined
-                  v-if="k + (n - 1) * 3 <= person.length"
+                  v-show="k + (n - 1) * 3 <= person.length"
+                  :disabled="k + (n - 1) * 3 > person.length"
                   @click="viewPerson(k + (n - 1) * 3 - 1)"
                   :key="dialog_content_key + 'vcard' + k + (n - 1) * 3"
                 >
                   <v-list-item three-line>
-                    <v-list-item-content>
-                      <div class="mb-4 font-shs">
+                    <v-list-item-content class="text-content">
+                      <div
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="mb-4 font-shs"
+                      >
                         <v-icon class="mr-2 mt-n2" color="green"
                           >mdi-account-tie</v-icon
                         >
                         {{ person[k + (n - 1) * 3 - 1].name }}
                       </div>
-                      <div class="mb-4 font-shs">
+                      <div
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="mb-4 font-shs"
+                      >
                         <v-icon class="mr-2 mt-n2" color="purple"
                           >mdi-crosshairs-gps</v-icon
                         >
@@ -60,21 +77,30 @@
                           ]
                         }}
                       </div>
-                      <div class="mb-4 font-shs">
+                      <div
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="mb-4 font-shs"
+                      >
                         <v-icon class="mr-2 mt-n2" color="red"
                           >mdi-handshake</v-icon
                         >
                         {{ person[k + (n - 1) * 3 - 1].commitments }}
                         Commitments
                       </div>
-                      <div class="mb-4 font-shs">
+                      <div
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="mb-4 font-shs"
+                      >
                         <v-icon class="mr-2 mt-n2" color="indigo"
                           >mdi-graph</v-icon
                         >
                         {{ person[k + (n - 1) * 3 - 1].connections }}
                         Connections
                       </div>
-                      <div class="font-shs">
+                      <div
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="font-shs"
+                      >
                         <v-icon class="mr-2 mt-n2" color="yellow"
                           >mdi-star</v-icon
                         >
@@ -82,7 +108,12 @@
                       </div>
                     </v-list-item-content>
 
-                    <v-avatar color="grey" size="88">
+                    <v-avatar
+                      class="avatar-dashboard"
+                      v-if="k + (n - 1) * 3 <= person.length"
+                      color="grey"
+                      size="88"
+                    >
                       <span
                         v-if="person[k + (n - 1) * 3 - 1].image_id === null"
                         class="white--text text-h5"
@@ -103,6 +134,7 @@
                     </v-avatar>
                   </v-list-item>
                   <v-btn
+                    v-if="k + (n - 1) * 3 <= person.length"
                     :id="`${person[k + (n - 1) * 3 - 1].id}connect`"
                     @click.stop="sendRequest(k + (n - 1) * 3 - 1)"
                     x-small
@@ -139,13 +171,14 @@
                     </span>
                   </v-btn>
                   <v-btn
-                    :id="`${person[k + (n - 1) * 3 - 1].id}cancle`"
-                    @click.stop="cancleRequest(k + (n - 1) * 3 - 1)"
+                    v-if="k + (n - 1) * 3 <= person.length"
+                    :id="`${person[k + (n - 1) * 3 - 1].id}cancel`"
+                    @click.stop="cancelRequest(k + (n - 1) * 3 - 1)"
                     x-small
                     color="red"
                     dark
                     width="100%"
-                    class="cancle-connect-btn"
+                    class="cancel-connect-btn"
                     :style="{
                       display: sentRequests.includes(
                         person[k + (n - 1) * 3 - 1].id
@@ -154,7 +187,7 @@
                         : 'none',
                     }"
                   >
-                    <span class="font-shs"> CANCLE </span>
+                    <span class="font-shs"> cancel </span>
                   </v-btn>
                 </v-card>
               </template>
@@ -170,7 +203,7 @@
           v-if="dialogPersonIndex >= 0 && dialog"
           persistent
           :max-width="
-            person[dialogPersonIndex].commitments === 0 ? '400px' : '800px'
+            person[dialogPersonIndex].commitments === 0 ? '400px' : '900px'
           "
         >
           <v-card>
@@ -218,7 +251,7 @@
                       </v-list-item-title>
                     </v-list-item-content>
 
-                    <v-row align="center" justify="end">
+                    <v-row align="center" justify="end" v-if="innerWidth > 500">
                       <v-btn
                         v-if="!item.replicated.includes(UID)"
                         :disabled="item.id === UID"
@@ -260,6 +293,46 @@
                         ></v-btn
                       >
                     </v-row>
+
+                    <v-list-item-content v-else>
+                      <v-row align="center" justify="end">
+                        <v-btn
+                          v-if="!item.replicated.includes(UID)"
+                          :disabled="item.id === UID"
+                          @click="handleReplicate(item.commitment_id)"
+                          icon
+                          dark
+                          class="ma-2 white--text"
+                          ><v-icon right dark
+                            >mdi-book-plus-multiple</v-icon
+                          ></v-btn
+                        >
+                        <v-btn
+                          v-else
+                          @click="handleReplicate(item.commitment_id)"
+                          class="mr-5 yellow--text"
+                          icon
+                        >
+                          <v-icon dark>mdi-file-star</v-icon>
+                        </v-btn>
+
+                        <v-btn
+                          @click="handleStar(item.commitment_id)"
+                          class="mr-5 white--text"
+                          v-if="!item.stars.includes(UID)"
+                          icon
+                          ><v-icon right dark>mdi-star</v-icon></v-btn
+                        >
+                        <v-btn
+                          v-else
+                          @click="handleStar(item.commitment_id)"
+                          class="mr-5 yellow--text"
+                          icon
+                        >
+                          <v-icon dark>mdi-star</v-icon>
+                        </v-btn>
+                      </v-row>
+                    </v-list-item-content>
                   </v-list-item>
                 </v-card-actions>
               </v-card>
@@ -336,6 +409,7 @@ export default {
       connectedPerson: [],
       sentRequests: [],
       dialog_content_key: 0,
+      innerWidth: 1000,
     };
   },
   methods: {
@@ -351,7 +425,7 @@ export default {
     sendRequest(index) {
       document.getElementById(`${this.person[index].id}connect`).style.display =
         "none";
-      document.getElementById(`${this.person[index].id}cancle`).style.display =
+      document.getElementById(`${this.person[index].id}cancel`).style.display =
         "block";
 
       const conn = [
@@ -363,10 +437,10 @@ export default {
       this.$store.commit("setConnectionRequest", conn);
       this.updateDB();
     },
-    cancleRequest(index) {
+    cancelRequest(index) {
       document.getElementById(`${this.person[index].id}connect`).style.display =
         "block";
-      document.getElementById(`${this.person[index].id}cancle`).style.display =
+      document.getElementById(`${this.person[index].id}cancel`).style.display =
         "none";
 
       let person = this.person[index];
@@ -388,13 +462,29 @@ export default {
     },
     nextPage() {
       this.currentPage++;
-      let upper_index = this.currentPage * 6;
-      this.person = this.users.slice(upper_index - 6, upper_index);
+
+      if (window.innerWidth < 500) {
+        let upper_index = this.currentPage * 2;
+        if (this.users.length >= upper_index)
+          this.person = this.users.slice(upper_index - 2, upper_index);
+        else this.person = this.users.slice(upper_index - 2, this.users.length);
+      } else {
+        let upper_index = this.currentPage * 6;
+        if (this.users.length >= upper_index)
+          this.person = this.users.slice(upper_index - 6, upper_index);
+        else this.person = this.users.slice(upper_index - 6, this.users.length);
+      }
     },
     prevPage() {
       this.currentPage--;
-      let upper_index = this.currentPage * 6;
-      this.person = this.users.slice(upper_index - 6, upper_index);
+
+      if (window.innerWidth < 500) {
+        let upper_index = this.currentPage * 2;
+        this.person = this.users.slice(upper_index - 2, upper_index);
+      } else {
+        let upper_index = this.currentPage * 6;
+        this.person = this.users.slice(upper_index - 6, upper_index);
+      }
     },
     handleStar(commitmentID) {
       this.person[this.dialogPersonIndex].allCommitments.forEach((item) => {
@@ -410,7 +500,6 @@ export default {
         }
       });
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
-      this.dialog_content_key += 1;
       this.updateDB();
     },
     handleReplicate(commitmentID) {
@@ -458,7 +547,6 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
-      this.dialog_content_key += 1;
       this.updateDB();
     },
     handleSeen() {
@@ -477,9 +565,9 @@ export default {
         this.updateDB();
       }
     },
-    fetchImage() {
+    fetchImage(img) {
       console.log("fetching image");
-      return "https://cdn.vuetifyjs.com/images/john.jpg";
+      return img;
     },
     updateDB() {
       let allCommitments = [];
@@ -516,14 +604,24 @@ export default {
     },
   },
   mounted() {
+    this.innerWidth = window.innerWidth;
     this.users = this.$store.getters.getPeople;
-    if (this.users.length <= 6) {
-      this.person = this.users;
-    } else {
-      this.person = this.users.slice(0, 6);
-    }
-    this.UID = this.$store.getters.getUID;
 
+    if (window.innerWidth < 500) {
+      if (this.users.length <= 2) {
+        this.person = this.users;
+      } else {
+        this.person = this.users.slice(0, 2);
+      }
+    } else {
+      if (this.users.length <= 6) {
+        this.person = this.users;
+      } else {
+        this.person = this.users.slice(0, 6);
+      }
+    }
+
+    this.UID = this.$store.getters.getUID;
     let currentUser = this.$store.getters.getPerson;
     if (currentUser.length > 0) {
       currentUser[0].allConnections.forEach((item) => {
@@ -579,10 +677,32 @@ export default {
 </script>
 
 <style scoped>
-.cancle-connect-btn {
+.cancel-connect-btn {
   display: none;
 }
 .g-animi-dash-card {
   opacity: 0;
+}
+
+@media (max-width: 480px) {
+  .action-btn {
+    margin-top: -40px;
+  }
+  .avatar-dashboard {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+    margin-top: 10px;
+  }
+  .text-content {
+    padding-top: 70px;
+  }
+  .people-card:nth-child(1) {
+    margin-top: 30px;
+  }
+  #card-container {
+    margin-top: 10px !important;
+  }
 }
 </style>

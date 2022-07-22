@@ -77,6 +77,7 @@ export default new Vuex.Store({
     },
     setConnection(state, payload) {
       if (payload.length === 0) return;
+
       state.people.forEach((person) => {
         if (person.id === payload[0].id) {
           person.connections = payload.length;
@@ -106,6 +107,7 @@ export default new Vuex.Store({
       });
     },
     setIndividual(state, payload) {
+      console.log(payload);
       state.people.forEach((person) => {
         if (person.id === payload.id) {
           person = payload;

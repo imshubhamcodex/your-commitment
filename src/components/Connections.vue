@@ -20,12 +20,15 @@
         dark
         x-small
         color="blue"
-        :disabled="person.length < 6"
+        :disabled="
+          (person.length < 6 && innerWidth >= 500) ||
+          (person.length < 2 && innerWidth < 500)
+        "
       >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
       <template>
-        <v-container class="mt-8">
+        <v-container class="mt-8" id="card-container">
           <div
             v-if="connections.length <= 0"
             style="padding-top: 150px; text-align: center"
@@ -37,14 +40,15 @@
               <v-col v-for="k in 3" :key="k + 'col-connections'">
                 <template>
                   <v-card
-                    v-if="k + (n - 1) * 3 <= person.length"
-                    class="mx-auto g-animi-connection-card"
+                    v-show="k + (n - 1) * 3 <= person.length"
+                    class="mx-auto g-animi-connection-card people-card"
                     max-width="344"
                     outlined
                     style="position: relative"
                     @click="viewPerson(k + (n - 1) * 3 - 1)"
                   >
                     <v-btn
+                      v-if="k + (n - 1) * 3 <= person.length"
                       icon
                       class="mr-1 mt-1"
                       style="position: absolute; right: 0; z-index: 9"
@@ -52,8 +56,10 @@
                     >
                       <v-icon color="red">mdi-delete</v-icon>
                     </v-btn>
-                    <v-list-item three-line>
-                      <v-list-item-content>
+                    <v-list-item three-line class="text-content">
+                      <v-list-item-content
+                        v-if="k + (n - 1) * 3 <= person.length"
+                      >
                         <div class="mb-4 font-shs">
                           <v-icon class="mr-2 mt-n2" color="green"
                             >mdi-account-tie</v-icon
@@ -95,7 +101,12 @@
                           {{ person[k + (n - 1) * 3 - 1].starsCount }} Stars
                         </div>
                       </v-list-item-content>
-                      <v-avatar color="grey" size="88">
+                      <v-avatar
+                        color="grey"
+                        size="88"
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="avatar-dashboard"
+                      >
                         <span
                           v-if="person[k + (n - 1) * 3 - 1].image_id === null"
                           class="white--text text-h5"
@@ -118,7 +129,13 @@
                       </v-avatar>
                     </v-list-item>
 
-                    <v-btn x-small color="teal" disabled width="100%">
+                    <v-btn
+                      x-small
+                      color="teal"
+                      disabled
+                      width="100%"
+                      v-if="k + (n - 1) * 3 <= person.length"
+                    >
                       <span class="font-shs">
                         Connected on
                         {{
@@ -191,7 +208,7 @@
                       </v-list-item-title>
                     </v-list-item-content>
 
-                    <v-row align="center" justify="end">
+                    <v-row align="center" justify="end" v-if="innerWidth > 500">
                       <v-btn
                         v-if="!item.replicated.includes(UID)"
                         :disabled="item.id === UID"
@@ -233,6 +250,46 @@
                         ></v-btn
                       >
                     </v-row>
+
+                    <v-list-item-content v-else>
+                      <v-row align="center" justify="end">
+                        <v-btn
+                          v-if="!item.replicated.includes(UID)"
+                          :disabled="item.id === UID"
+                          @click="handleReplicate(item.commitment_id)"
+                          icon
+                          dark
+                          class="ma-2 white--text"
+                          ><v-icon right dark
+                            >mdi-book-plus-multiple</v-icon
+                          ></v-btn
+                        >
+                        <v-btn
+                          v-else
+                          @click="handleReplicate(item.commitment_id)"
+                          class="mr-5 yellow--text"
+                          icon
+                        >
+                          <v-icon dark>mdi-file-star</v-icon>
+                        </v-btn>
+
+                        <v-btn
+                          @click="handleStar(item.commitment_id)"
+                          class="mr-5 white--text"
+                          v-if="!item.stars.includes(UID)"
+                          icon
+                          ><v-icon right dark>mdi-star</v-icon></v-btn
+                        >
+                        <v-btn
+                          v-else
+                          @click="handleStar(item.commitment_id)"
+                          class="mr-5 yellow--text"
+                          icon
+                        >
+                          <v-icon dark>mdi-star</v-icon>
+                        </v-btn>
+                      </v-row>
+                    </v-list-item-content>
                   </v-list-item>
                 </v-card-actions>
               </v-card>
@@ -262,6 +319,7 @@ export default {
     return {
       person: [],
       connections: [],
+      innerWidth: 1000,
       location_state: [
         "Andhra",
         "Arunachal",
@@ -306,6 +364,7 @@ export default {
       dialogPersonIndex: -1,
       dialog_content_key: 0,
       UID: "",
+      users: [],
     };
   },
   methods: {
@@ -373,13 +432,27 @@ export default {
     },
     nextPage() {
       this.currentPage++;
-      let upper_index = this.currentPage * 6;
-      this.person = this.users.slice(upper_index - 6, upper_index);
+      if (window.innerWidth < 500) {
+        let upper_index = this.currentPage * 2;
+        if (this.users.length >= upper_index)
+          this.person = this.users.slice(upper_index - 2, upper_index);
+        else this.person = this.users.slice(upper_index - 2, this.users.length);
+      } else {
+        let upper_index = this.currentPage * 6;
+        if (this.users.length >= upper_index)
+          this.person = this.users.slice(upper_index - 6, upper_index);
+        else this.person = this.users.slice(upper_index - 6, this.users.length);
+      }
     },
     prevPage() {
       this.currentPage--;
-      let upper_index = this.currentPage * 6;
-      this.person = this.users.slice(upper_index - 6, upper_index);
+      if (window.innerWidth < 500) {
+        let upper_index = this.currentPage * 2;
+        this.person = this.users.slice(upper_index - 2, upper_index);
+      } else {
+        let upper_index = this.currentPage * 6;
+        this.person = this.users.slice(upper_index - 6, upper_index);
+      }
     },
 
     deletePerson(person) {
@@ -401,31 +474,32 @@ export default {
         }
       });
 
+      this.users.forEach((p, index) => {
+        if (p.id === person.id) {
+          this.users.splice(index, 1);
+        }
+      });
+
       let currentUser = this.$store.getters.getPerson[0];
       currentUser.connections = this.connections.length;
       currentUser.allConnections = this.connections;
 
       person.allConnections.forEach((con, index) => {
         if (con.connectedWith.includes(currentUser.id)) {
-          if (con.connectedWith.length === 1) {
-            person.allConnections.splice(index, 1);
-          } else {
-            con.connectedWith.splice(
-              con.connectedWith.indexOf(currentUser.id),
-              1
-            );
-          }
+          person.allConnections.splice(index, 1);
         }
       });
       person.connections = person.allConnections.length;
+
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
+
       this.updateDB();
       console.log(currentUser);
     },
-    fetchImage() {
+    fetchImage(img) {
       console.log("fetching image");
-      return "https://cdn.vuetifyjs.com/images/john.jpg";
+      return img;
     },
     updateDB() {
       let allCommitments = [];
@@ -462,9 +536,13 @@ export default {
     },
   },
   mounted() {
+    this.innerWidth = window.innerWidth;
+
     this.connections = this.$store.getters.getPerson[0].allConnections;
     let people = this.$store.getters.getPeople;
     this.UID = this.$store.getters.getUID;
+
+    console.log(this.connections);
 
     people.forEach((person) => {
       this.connections.forEach((connection) => {
@@ -474,10 +552,27 @@ export default {
         }
       });
     });
-    
+
+    this.users = this.person;
+
+    if (window.innerWidth < 500) {
+      if (this.users.length <= 2) {
+        this.person = this.users;
+      } else {
+        this.person = this.users.slice(0, 2);
+      }
+    } else {
+      if (this.users.length <= 6) {
+        this.person = this.users;
+      } else {
+        this.person = this.users.slice(0, 6);
+      }
+    }
 
     let inv = setInterval(() => {
-      if (document.getElementsByClassName("g-animi-connection-card").length > 0) {
+      if (
+        document.getElementsByClassName("g-animi-connection-card").length > 0
+      ) {
         clearInterval(inv);
         gsap.fromTo(
           ".g-animi-connection-card",
@@ -503,7 +598,29 @@ export default {
 </script>
 
 <style scoped>
-.g-animi-connection-card{
+.g-animi-connection-card {
   opacity: 0;
+}
+
+@media (max-width: 480px) {
+  .action-btn {
+    margin-top: -40px;
+  }
+  .avatar-dashboard {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+    margin-top: 10px;
+  }
+  .text-content {
+    padding-top: 70px;
+  }
+  .people-card:nth-child(1) {
+    margin-top: 30px;
+  }
+  #card-container {
+    margin-top: 10px !important;
+  }
 }
 </style>

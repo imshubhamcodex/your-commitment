@@ -95,7 +95,7 @@
                   label="Password"
                   append-icon="mdi-lock-outline"
                   color="blue"
-                  type="text"
+                  type="password"
                   :counter="20"
                   v-model="password"
                 ></v-text-field>
@@ -193,6 +193,7 @@ export default {
       password: "",
       dialog: false,
       wait: true,
+      once: false,
       states: [
         "Andhra",
         "Arunachal",
@@ -236,7 +237,7 @@ export default {
       country_index: null,
       image_id: null,
       imgFile: null,
-      id: (Math.random() + 1).toString(36).substring(7),
+      id: (Math.random() + 1).toString(36).substring(2),
       imgURL: null,
     };
   },
@@ -247,14 +248,6 @@ export default {
     goToLogin() {
       this.dialog = false;
       this.$router.push("/login");
-    },
-    nextSlide() {
-      if (this.currentSlide < 1) {
-        this.currentSlide++;
-        document.getElementsByTagName("button")[this.currentSlide].click();
-      } else {
-        this.createAccount();
-      }
     },
     createAccount() {
       this.dialog = true;
@@ -267,8 +260,8 @@ export default {
               .storage()
               .ref()
               .child("images/" + this.id + ".png");
-            await pathReference.put(this.imgFile).then(() => {
-              pathReference.getDownloadURL().then((url) => {
+            await pathReference.put(this.imgFile).then(async () => {
+              await pathReference.getDownloadURL().then((url) => {
                 this.image_id = url;
                 console.log(url);
               });
@@ -302,19 +295,42 @@ export default {
               return;
             });
 
+          await firebase
+            .firestore()
+            .collection("LAST_ACTIVE")
+            .doc(this.id)
+            .set(
+              {
+                active: Date.now(),
+              },
+              { merge: true }
+            )
+            .catch((error) => {
+              console.log("Error Saving LAST ACTIVE:", error);
+              return;
+            });
+
           this.wait = false;
         })
         .catch((error) => {
           this.dialog = false;
           console.log(error.code, error.message);
           alert("Error while creating account: " + error.message);
+          return;
         });
     },
-    previousSlide() {
-      if (this.currentSlide > 0) {
-        this.currentSlide--;
-        document.getElementsByTagName("button")[this.currentSlide].click();
+    nextSlide() {
+      if (this.currentSlide < 1) {
+        this.currentSlide = 1;
+        document.getElementsByTagName("button")[this.once ? 2 : 1].click();
+      } else {
+        this.createAccount();
       }
+    },
+    previousSlide() {
+      this.currentSlide = 0;
+      document.getElementsByTagName("button")[1].click();
+      this.once = true;
     },
     btnDisabled() {
       if (this.currentSlide === 0) {
@@ -386,5 +402,19 @@ export default {
   text-align: center;
   z-index: 99;
   zoom: 0.9;
+}
+
+@media (max-width: 480px) {
+  #container {
+    width: 70%;
+  }
+  #container-slides {
+    width: 70%;
+    margin-left: 15%;
+  }
+  #container-bottom {
+    width: 70%;
+    margin-left: 15%;
+  }
 }
 </style>
