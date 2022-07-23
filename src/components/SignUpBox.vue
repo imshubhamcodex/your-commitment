@@ -353,6 +353,16 @@ export default {
       }
     },
   },
+  mounted() {
+    document.documentElement.style.setProperty("overflow", "auto");
+    const metaViewport = document.querySelector("meta[name=viewport]");
+    metaViewport.setAttribute(
+      "content",
+      "height=" +
+        window.innerHeight +
+        "px, width=device-width, initial-scale=1.0"
+    );
+  },
   watch: {
     imgFile: function () {
       this.imgURL = window.URL.createObjectURL(this.imgFile);
