@@ -226,7 +226,7 @@ export default {
     margin-top:70px;
   }
   #lower-list{
-    padding-top:60px;
+    padding-top:120px;
     margin-bottom: 0px;
     padding-bottom: 20px;
   }
