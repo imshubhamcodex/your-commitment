@@ -226,10 +226,9 @@ export default {
     margin-top:70px;
   }
   #lower-list{
-    padding-top:160px;
-    min-height:100px;
-    margin-bottom: 0;
-    padding-bottom: 0;
+    padding-top:120px;
+    margin-bottom: 0px;
+    padding-bottom: 20px;
   }
 }
 </style>

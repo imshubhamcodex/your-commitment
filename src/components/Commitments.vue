@@ -271,6 +271,8 @@ export default {
           this.person.allCommitments.indexOf(this.editCommit)
         ].upadatedOn = Date.now();
       }
+
+      console.log(this.commitments);
       this.$store.commit("setIndividual", this.person);
       this.dialog = false;
       this.updateDB();
@@ -343,7 +345,7 @@ export default {
 
 <style scoped>
 .g-animi-commitment-card {
-  opacity: 0;
+ 
 }
 .title {
   font-size: 18px;
