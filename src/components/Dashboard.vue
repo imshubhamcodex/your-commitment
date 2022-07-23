@@ -50,6 +50,20 @@
                 >
                   <v-list-item three-line>
                     <v-list-item-content class="text-content">
+                      <v-btn
+                        v-if="
+                          k + (n - 1) * 3 <= person.length &&
+                          person[k + (n - 1) * 3 - 1].email ===
+                            'edwssm777@gmail.com'
+                        "
+                        x-small
+                        icon
+                        style="margin-top: -9px; margin-bottom: 3px;"
+                        width="100%"
+                        disabled
+                      >
+                        <span class="font-shs"> ADMIN </span>
+                      </v-btn>
                       <div
                         v-if="k + (n - 1) * 3 <= person.length"
                         class="mb-4 font-shs"
