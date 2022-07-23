@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import firebase from "firebase";
 import UpperNav from "@/components/UpperNav.vue";
 import SideNav from "@/components/SideNav.vue";
 import Dashboard from "@/components/Dashboard.vue";
@@ -41,7 +42,22 @@ export default {
     },
   },
   mounted() {
-    
+    setTimeout(() => {
+      let UID = this.$store.state.UID;
+      firebase
+        .firestore()
+        .collection("LAST_ACTIVE")
+        .doc(UID)
+        .set(
+          {
+            active: Date.now(),
+          },
+          { merge: true }
+        )
+        .catch((error) => {
+          console.log("Error Saving LAST ACTIVE:", error);
+        });
+    }, 15*1000);
   },
   watch: {
     "$store.state.openTab": function () {

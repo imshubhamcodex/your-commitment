@@ -162,7 +162,7 @@ export default {
     makePayment() {
       const options = {
         key: process.env.VUE_APP_RAZORPAY_KEY_ID,
-        amount: 50 * 100, // 100 paise = INR 1
+        amount: 51 * 100, // 100 paise = INR 1
         name: "Commitment",
         description: "Donating LOVE",
         image: "https://tinyurl.com/4bcy9a3y",
@@ -174,7 +174,7 @@ export default {
           contact: 8018439472,
         },
         theme: {
-          color: "#651FFF",
+          color: "cyan",
         },
       };
       const rzp = new Razorpay(options);
@@ -224,6 +224,12 @@ export default {
   #power-btn{
     margin-left:-10px;
     margin-top:70px;
+  }
+  #lower-list{
+    padding-top:160px;
+    min-height:100px;
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 }
 </style>

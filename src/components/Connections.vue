@@ -36,8 +36,15 @@
             <span>No Connection Found!</span>
           </div>
           <template v-else>
-            <v-row v-for="n in 2" :key="n + 'row-connections'" class="mx-auto">
-              <v-col v-for="k in 3" :key="k + 'col-connections'">
+            <v-row
+              v-for="n in innerWidth < 500 ? 1 : 2"
+              :key="n + 'row-connections'"
+              class="mx-auto"
+            >
+              <v-col
+                v-for="k in innerWidth < 500 ? 2 : 3"
+                :key="k + 'col-connections'"
+              >
                 <template>
                   <v-card
                     v-show="k + (n - 1) * 3 <= person.length"
@@ -147,6 +154,9 @@
                     </v-btn>
                   </v-card>
                 </template>
+                <template v-if="person.length === 1 && innerWidth < 500">
+                  <v-card min-width="344"> </v-card>
+                </template>
               </v-col>
             </v-row>
           </template>
@@ -204,7 +214,11 @@
 
                     <v-list-item-content>
                       <v-list-item-title class="ml-4">
-                        <span class="font-h">{{ item.title }}</span>
+                        <span class="font-h">{{
+                          item.title.length > 25
+                            ? item.title.substring(0, 14) + "..."
+                            : item.title
+                        }}</span>
                       </v-list-item-title>
                     </v-list-item-content>
 

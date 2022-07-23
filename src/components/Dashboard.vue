@@ -191,6 +191,9 @@
                   </v-btn>
                 </v-card>
               </template>
+              <template v-if="person.length === 1 && innerWidth < 500">
+                <v-card min-width="344"> </v-card>
+              </template>
             </v-col>
           </v-row>
         </v-container>
@@ -247,7 +250,11 @@
 
                     <v-list-item-content>
                       <v-list-item-title class="ml-4">
-                        <span class="font-h">{{ item.title }}</span>
+                        <span class="font-h">{{
+                          item.title.length > 25
+                            ? item.title.substring(0, 14) + "..."
+                            : item.title
+                        }}</span>
                       </v-list-item-title>
                     </v-list-item-content>
 

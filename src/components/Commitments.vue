@@ -2,11 +2,7 @@
   <div class="content-div">
     <div class="mt-2 ml-3 mr-3">
       <h1 class="font-h-big">Unbreakable Promises</h1>
-      <v-btn
-        @click="newCommitment"
-        color="blue"
-        class="white--text action-btn"
-      >
+      <v-btn @click="newCommitment" color="blue" class="white--text action-btn">
         New Commitment
         <v-icon right dark> mdi-plus-circle </v-icon>
       </v-btn>
@@ -32,14 +28,19 @@
 
                       <v-list-item-content>
                         <v-list-item-title class="ml-4">
-                          <span style="font-size: 18px; font-weight: bold">{{
-                            item.title
+                          <span class="title-">{{
+                            item.title.length > 25
+                              ? item.title.substring(0, 14) + "..."
+                              : item.title
                           }}</span>
                         </v-list-item-title>
                       </v-list-item-content>
 
-                      <v-row align="center" justify="end">
-                        <v-btn @click="editCommitment(item)" icon class="mr-10"
+                      <v-row justify="end" class="row-edit">
+                        <v-btn
+                          @click="editCommitment(item)"
+                          icon
+                          class="pencil-btn"
                           ><v-icon> mdi-lead-pencil</v-icon>
                         </v-btn>
                         <v-btn
@@ -228,7 +229,7 @@ export default {
       console.log("deleted commitment");
       this.$store.commit("setIndividual", this.person);
 
-      this.updateDB()
+      this.updateDB();
     },
     newCommitment() {
       this.newCommit = true;
@@ -272,7 +273,7 @@ export default {
       }
       this.$store.commit("setIndividual", this.person);
       this.dialog = false;
-      this.updateDB()
+      this.updateDB();
     },
     updateDB() {
       let allCommitments = [];
@@ -313,7 +314,9 @@ export default {
     this.commitments = this.person.allCommitments;
 
     let inv = setInterval(() => {
-      if (document.getElementsByClassName("g-animi-commitment-card").length > 0) {
+      if (
+        document.getElementsByClassName("g-animi-commitment-card").length > 0
+      ) {
         clearInterval(inv);
         gsap.fromTo(
           ".g-animi-commitment-card",
@@ -339,14 +342,33 @@ export default {
 </script>
 
 <style scoped>
-.g-animi-commitment-card{
+.g-animi-commitment-card {
   opacity: 0;
 }
+.title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.row-edit {
+  width: 70px;
+}
+.pencil-btn {
+  margin-right: 50px;
+}
 
-@media(max-width:500px) {
-  .action-btn{
-    margin-top:20px;
-    margin-right:17px !important;
+@media (max-width: 500px) {
+  .action-btn {
+    margin-top: 20px;
+    margin-right: 17px !important;
+  }
+  .title {
+    font-size: 12px;
+  }
+  .pencil-btn {
+    margin-right: 0px;
+  }
+  .row-edit {
+    width: 0px;
   }
 }
 </style>
