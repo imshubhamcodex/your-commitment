@@ -3,6 +3,7 @@
     <div class="mt-2 ml-3 mr-3">
       <h1 class="font-h-big">Let's Catch Up</h1>
       <v-btn
+        id="prev-people-btn-dashboard"
         @click.stop="prevPage"
         :disabled="currentPage === 1"
         class="action-btn"
@@ -14,6 +15,7 @@
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn
+        id="next-people-btn-dashboard"
         @click.stop="nextPage"
         class="action-btn mr-2"
         fab
@@ -22,13 +24,19 @@
         color="blue"
         :disabled="
           (person.length < 6 && innerWidth >= 500) ||
-          (person.length < 2 && innerWidth < 500)
+          (person.length < 2 && innerWidth < 500) ||
+          (this.users.length <= this.currentPage * 2 && innerWidth < 500) ||
+          (this.users.length <= this.currentPage * 6 && innerWidth >= 500)
         "
       >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
-      <template>
-        <v-container class="mt-8" id="card-container">
+      <div id="card-container-div">
+        <v-container
+          class="mt-8"
+          id="card-container"
+          v-on:scroll.passive="handleScroll"
+        >
           <v-row
             v-for="n in innerWidth < 500 ? 1 : 2"
             :key="n + 'row-dashboard'"
@@ -58,7 +66,7 @@
                         "
                         x-small
                         icon
-                        style="margin-top: -9px; margin-bottom: 3px;"
+                        style="margin-top: -9px; margin-bottom: 3px"
                         width="100%"
                         disabled
                       >
@@ -154,7 +162,12 @@
                     x-small
                     :dark="
                       person[k + (n - 1) * 3 - 1].id === UID ||
-                      connectedPerson.includes(person[k + (n - 1) * 3 - 1].id)
+                      connectedPerson.includes(
+                        person[k + (n - 1) * 3 - 1].id
+                      ) ||
+                      allRequestRecivedID.includes(
+                        person[k + (n - 1) * 3 - 1].id
+                      )
                         ? false
                         : true
                     "
@@ -162,7 +175,12 @@
                     width="100%"
                     :disabled="
                       person[k + (n - 1) * 3 - 1].id === UID ||
-                      connectedPerson.includes(person[k + (n - 1) * 3 - 1].id)
+                      connectedPerson.includes(
+                        person[k + (n - 1) * 3 - 1].id
+                      ) ||
+                      allRequestRecivedID.includes(
+                        person[k + (n - 1) * 3 - 1].id
+                      )
                     "
                     :style="{
                       display: sentRequests.includes(
@@ -180,6 +198,10 @@
                               person[k + (n - 1) * 3 - 1].id
                             )
                           ? "ALREADY CONNECTED"
+                          : allRequestRecivedID.includes(
+                              person[k + (n - 1) * 3 - 1].id
+                            )
+                          ? "SENT YOU REQUEST"
                           : "CONNECT"
                       }}
                     </span>
@@ -211,7 +233,7 @@
             </v-col>
           </v-row>
         </v-container>
-      </template>
+      </div>
     </div>
     <template>
       <v-row justify="center">
@@ -429,11 +451,22 @@ export default {
       UID: "",
       connectedPerson: [],
       sentRequests: [],
+      allRequestRecivedID: [],
       dialog_content_key: 0,
       innerWidth: 1000,
     };
   },
   methods: {
+    handleScroll(e) {
+      if (
+        e.target.scrollHeight <
+        e.target.scrollTop + e.target.offsetHeight + 10
+      ) {
+        e.target.scrollTop = 0;
+        document.getElementById("next-people-btn-dashboard").click();
+        console.log("next");
+      }
+    },
     viewPerson(index) {
       this.dialogPersonIndex = index;
       this.dialog = true;
@@ -483,7 +516,7 @@ export default {
     },
     nextPage() {
       this.currentPage++;
-
+      // this.users.length <= (this.currentPage+1) * 2
       if (window.innerWidth < 500) {
         let upper_index = this.currentPage * 2;
         if (this.users.length >= upper_index)
@@ -587,7 +620,6 @@ export default {
       }
     },
     fetchImage(img) {
-      console.log("fetching image");
       return img;
     },
     updateDB() {
@@ -625,17 +657,6 @@ export default {
     },
   },
   mounted() {
-
-    document.documentElement.style.setProperty("overflow", "auto");
-    const metaViewport = document.querySelector("meta[name=viewport]");
-    metaViewport.setAttribute(
-      "content",
-      "height=" +
-        window.innerHeight +
-        "px, width=device-width, initial-scale=1.0"
-    );
-
-    
     this.innerWidth = window.innerWidth;
     this.users = this.$store.getters.getPeople;
 
@@ -645,6 +666,9 @@ export default {
       } else {
         this.person = this.users.slice(0, 2);
       }
+      console.log();
+      document.getElementById("card-container").style.height =
+        Number(window.innerHeight) - 50 + "px";
     } else {
       if (this.users.length <= 6) {
         this.person = this.users;
@@ -655,6 +679,7 @@ export default {
 
     this.UID = this.$store.getters.getUID;
     let currentUser = this.$store.getters.getPerson;
+    this.allRequestRecivedID = currentUser[0].connectRequestReceived;
     if (currentUser.length > 0) {
       currentUser[0].allConnections.forEach((item) => {
         if (item.connectedWith.length > 0)
@@ -716,7 +741,7 @@ export default {
   opacity: 0;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 580px) {
   .action-btn {
     margin-top: -40px;
   }
@@ -735,6 +760,8 @@ export default {
   }
   #card-container {
     margin-top: 10px !important;
+    overflow: auto !important;
+    padding-bottom: 200px;
   }
 }
 </style>

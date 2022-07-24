@@ -115,6 +115,7 @@ export default {
                 if (doc.data().email === this.email) {
                   this.$store.commit("setUID", doc.data().id);
                   let UID = this.$store.state.UID;
+                  localStorage.setItem("email-commitment", this.email);
                   await firebase
                     .firestore()
                     .collection("USERS")
@@ -212,7 +213,6 @@ export default {
     },
   },
   mounted() {
-
     document.documentElement.style.setProperty("overflow", "auto");
     const metaViewport = document.querySelector("meta[name=viewport]");
     metaViewport.setAttribute(
@@ -245,6 +245,30 @@ export default {
         stagger: 0.1,
       }
     );
+
+    // localStorage.getItem("login") === "yes"
+    //   ? this.$router.replace("/home")
+    //   : this.$router.replace("/login");
+
+    this.$store.replaceState({
+      openTab: "DASHBOARD",
+      UID: null,
+      people: [],
+      notifications: -1,
+      allCommitments: [],
+      allConnections: [],
+      allConnectRequest: [],
+      random: 1,
+    });
+
+    let email = localStorage.getItem("email-commitment");
+
+    if (email === null || email === undefined || email === "") {
+      return;
+    } else {
+      this.email = email;
+      // this.goForAuth();
+    }
   },
 };
 </script>

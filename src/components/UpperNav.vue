@@ -141,6 +141,7 @@
 
 <script>
 export default {
+  props: ["random"],
   data() {
     return {
       notifications: 0,
@@ -222,7 +223,6 @@ export default {
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
 
-      
       this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
       this.$store.commit("setNotifications", this.notifications);
@@ -246,7 +246,7 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
-      
+
       this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
       console.log(this.notifications);
@@ -306,6 +306,20 @@ export default {
       }
     });
   },
+  watch: {
+    random: function () {
+      this.person = [];
+      this.UID = this.$store.getters.getUID;
+      this.user = this.$store.getters.getPerson[0];
+      let allRequestRecivedID = this.user.connectRequestReceived;
+      this.notifications = allRequestRecivedID.length;
+      this.$store.getters.getPeople.forEach((person) => {
+        if (allRequestRecivedID.includes(person.id)) {
+          this.person.push(person);
+        }
+      });
+    },
+  },
 };
 </script>
 
@@ -316,8 +330,8 @@ export default {
   zoom: 0.85;
 }
 
-@media(max-width:480px){
-  #top-head{
+@media (max-width: 480px) {
+  #top-head {
     display: none;
   }
 }

@@ -1,9 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  plugins: [
+    createPersistedState({
+      storage: window.sessionStorage,
+    }),
+  ],
   state: {
     openTab: "DASHBOARD",
     UID: null,
@@ -12,6 +18,7 @@ export default new Vuex.Store({
     allCommitments: [],
     allConnections: [],
     allConnectRequest: [],
+    random: 1,
   },
   getters: {
     getOpenTab: (state) => state.openTab,
@@ -137,6 +144,28 @@ export default new Vuex.Store({
     },
     setUID(state, payload) {
       state.UID = payload;
+    },
+    setLastActive(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === state.UID) {
+          person.last_active = payload;
+          return;
+        }
+      });
+    },
+    addConnectRequestReceived(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === state.UID) {
+          person.connectRequestReceived.push(payload);
+        }
+      });
+    },
+    removeConnectRequestReceived(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === state.UID) {
+          person.connectRequestReceived.splice(payload, 1);
+        }
+      });
     },
   },
 });

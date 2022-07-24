@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TopNav @accepted="accepted" />
+    <TopNav @accepted="accepted" :random="random" />
     <SideNav />
     <Dashboard :accepted_id="accepted_id" v-if="showDashboard" />
     <Commitments v-if="showCommitments" />
@@ -11,7 +11,10 @@
       <v-row justify="center">
         <v-dialog v-model="dialog" persistent max-width="290">
           <v-card>
-            <v-card-title  style="text-align: center; display:block;margin:auto auto:" class="font-h">
+            <v-card-title
+              style="text-align: center; display:block;margin:auto auto:"
+              class="font-h"
+            >
               404. Page lost in space.
             </v-card-title>
             <v-card-text class="pt-2">
@@ -60,6 +63,7 @@ export default {
       showHelp: false,
       accepted_id: "",
       dialog: false,
+      random: 1,
     };
   },
   methods: {
@@ -72,9 +76,10 @@ export default {
     },
   },
   mounted() {
+    console.log("mounted ");
     let UID = this.$store.state.UID;
 
-    if (UID === null) {
+    if (UID === null && false) {
       this.dialog = true;
       return;
     } else {
@@ -93,6 +98,54 @@ export default {
             console.log("Error Saving LAST ACTIVE:", error);
           });
       }, 15 * 1000);
+
+      firebase
+        .firestore()
+        .collection("LAST_ACTIVE")
+        .doc(UID)
+        .onSnapshot((doc) => {
+          if (doc.data().active) {
+            this.$store.commit("setLastActive", doc.data().active);
+          }
+        });
+
+      firebase
+        .firestore()
+        .collection("CONNECT_REQ")
+        .onSnapshot((res) => {
+          let data = res.docs.map((doc) => doc.data());
+          let ids = res.docs.map((doc) => doc.id);
+          let currentUser = this.$store.getters.getPerson[0];
+          let connectRequestReceivedOld = [
+            ...currentUser.connectRequestReceived,
+          ];
+          let connectRequestReceivedNew = [];
+
+          data.forEach((request, index) => {
+            request.CONNECT_REQ.forEach((req) => {
+              if (req.to === UID) {
+                connectRequestReceivedNew.push(req.from);
+              }
+            });
+          });
+          console.log(connectRequestReceivedNew, connectRequestReceivedOld);
+          if (
+            connectRequestReceivedNew.sort().toString() !==
+            connectRequestReceivedOld.sort().toString()
+          ) {
+            connectRequestReceivedNew.forEach((ele) => {
+              if (!connectRequestReceivedOld.includes(ele)) {
+                this.$store.commit("addConnectRequestReceived", ele);
+              }
+            });
+            connectRequestReceivedOld.forEach((ele) => {
+              if (!connectRequestReceivedNew.includes(ele)) {
+                this.$store.commit("removeConnectRequestReceived", ele);
+              }
+            });
+          }
+          this.random = (Math.random() + 1).toString(36).substring(2);
+        });
     }
   },
   watch: {

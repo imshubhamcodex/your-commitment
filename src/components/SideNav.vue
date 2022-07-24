@@ -2,7 +2,8 @@
   <v-card id="card">
     <v-list class="mb-12 mt-2">
       <v-list-item id="p-logo" class="mt-n2">
-        <img id="logo"
+        <img
+          id="logo"
           src="../assets/logo.png"
           style="
             height: 100px;
@@ -149,7 +150,7 @@ export default {
             allConnections: [],
             allConnectRequest: [],
           });
-
+          localStorage.setItem("email-commitment", "");
           this.$router.replace("/");
         })
         .catch((err) => {
@@ -213,20 +214,20 @@ export default {
   margin-top: 70px;
 }
 
-@media(max-width:480px){
-  #p-logo{
-    padding-left:10px;
+@media (max-width: 480px) {
+  #p-logo {
+    padding-left: 10px;
   }
-  #logo{
-    zoom:0.3;
-    margin-top:5px !important;
+  #logo {
+    zoom: 0.3;
+    margin-top: 5px !important;
   }
-  #power-btn{
-    margin-left:-10px;
-    margin-top:70px;
+  #power-btn {
+    margin-left: -10px;
+    margin-top: 70px;
   }
-  #lower-list{
-    padding-top:120px;
+  #lower-list {
+    padding-top: 20px;
     margin-bottom: 0px;
     padding-bottom: 20px;
   }

@@ -52,7 +52,7 @@
                     ></v-select>
                   </v-col>
 
-                  <v-col class="d-flex" cols="12" sm="6">
+                  <v-col id="state-col" class="d-flex" cols="12" sm="6">
                     <v-select
                       v-model="state_index"
                       :items="states"
@@ -78,10 +78,19 @@
                 >
                   <img v-if="imgURL !== null" :src="imgURL" />
                   <span v-else class="white--text text-h5">{{
-                    this.fname.substring(0, 1).toUpperCase() +
-                    this.lname.substring(0, 1).toUpperCase()
+                    this.fname.trim().substring(0, 1).toUpperCase() +
+                    this.lname.trim().substring(0, 1).toUpperCase()
                   }}</span>
                 </v-avatar>
+                <v-btn
+                  x-small
+                  icon
+                  style="margin-top: 9px; margin-bottom: 3px"
+                  width="100%"
+                  @click="setUserImag"
+                >
+                  <span class="font-shs"> SET IMAGE 📸 </span>
+                </v-btn>
                 <v-file-input
                   id="file-upload"
                   hide-input
@@ -247,9 +256,11 @@ export default {
     },
     goToLogin() {
       this.dialog = false;
-      this.$router.push("/login");
+      this.$router.replace("/login");
     },
     createAccount() {
+      this.fname = this.fname.trim();
+      this.lname = this.lname.trim();
       this.dialog = true;
       firebase
         .auth()
@@ -425,6 +436,9 @@ export default {
   #container-bottom {
     width: 70%;
     margin-left: 15%;
+  }
+  #state-col {
+    margin-top: -20px;
   }
 }
 </style>
