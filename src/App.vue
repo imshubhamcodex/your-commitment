@@ -137,69 +137,69 @@ export default {
     "$store.state.allCommitments": function () {
       if (!this.$store.state.UID) return;
 
-      // let peep = this.$store.getters.getPerson[0];
-      // let commintments = peep.allCommitments;
-      // firebase
-      //   .firestore()
-      //   .collection("COMMITMENTS")
-      //   .doc(peep.id)
-      //   .set(
-      //     {
-      //       COMMITMENTS: commintments,
-      //     },
-      //     { merge: true }
-      //   )
-      //   .catch((error) => {
-      //     console.log("Error Saving Commitment:", error);
-      //   });
+      let peep = this.$store.getters.getPerson[0];
+      let commintments = peep.allCommitments;
+      firebase
+        .firestore()
+        .collection("COMMITMENTS")
+        .doc(peep.id)
+        .set(
+          {
+            COMMITMENTS: commintments,
+          },
+          { merge: true }
+        )
+        .catch((error) => {
+          console.log("Error Saving Commitment:", error);
+        });
     },
     "$store.state.allConnections": function () {
       if (!this.$store.state.UID) return;
 
-      // let allConnections = this.$store.state.allConnections;
-      // allConnections.forEach((connection) => {
-      //   let ID = connection[connection.length - 1];
-      //   let con =
-      //     connection.length > 1
-      //       ? connection.slice(0, connection.length - 1)
-      //       : [];
-      //   firebase
-      //     .firestore()
-      //     .collection("CONNECTIONS")
-      //     .doc(ID)
-      //     .set(
-      //       {
-      //         CONNECTIONS: con,
-      //       },
-      //       { merge: true }
-      //     )
-      //     .catch((error) => {
-      //       console.log("Error Saving Connections:", error);
-      //     });
-      //   console.log(connection);
-      // });
+      let allConnections = this.$store.state.allConnections;
+      allConnections.forEach((connection) => {
+        let ID = connection[connection.length - 1];
+        let con =
+          connection.length > 1
+            ? connection.slice(0, connection.length - 1)
+            : [];
+        firebase
+          .firestore()
+          .collection("CONNECTIONS")
+          .doc(ID)
+          .set(
+            {
+              CONNECTIONS: con,
+            },
+            { merge: true }
+          )
+          .catch((error) => {
+            console.log("Error Saving Connections:", error);
+          });
+        console.log(connection);
+      });
     },
     "$store.state.allConnectRequest": function () {
-      // if (!this.$store.state.UID) return;
+      if (!this.$store.state.UID) return;
 
-      // let allConnectRequest = this.$store.state.allConnectRequest;
-      // allConnectRequest.forEach((conn) => {
-      //   let ID = conn[conn.length - 1];
-      //   let connReq = conn.length > 1 ? conn.slice(0, conn.length - 1) : [];
-      //   firebase
-      //     .firestore()
-      //     .collection("CONNECT_REQ")
-      //     .doc(ID)
-      //     .set(
-      //       {
-      //         CONNECT_REQ: connReq,
-      //       },
-      //       { merge: true }
-      //     )
-      //     .catch((error) => {
-      //       console.log("Error Sending Connect Request:", error);
-      //     });
-      // });
+      let allConnectRequest = this.$store.state.allConnectRequest;
+      allConnectRequest.forEach((conn) => {
+        let ID = conn[conn.length - 1];
+        let connReq = conn.length > 1 ? conn.slice(0, conn.length - 1) : [];
+        firebase
+          .firestore()
+          .collection("CONNECT_REQ")
+          .doc(ID)
+          .set(
+            {
+              CONNECT_REQ: connReq,
+            },
+            { merge: true }
+          )
+          .catch((error) => {
+            console.log("Error Sending Connect Request:", error);
+          });
+      });
     },
   },
 };
