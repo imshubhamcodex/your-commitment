@@ -126,11 +126,24 @@
           </template>
 
           <span class="font-sh mr-4">{{ this.user.name }}</span>
-          <v-avatar color="cyan" size="40">
-            <span v-if="user.image_id === null" class="white--text text-h6">{{
-              this.user.name.split(" ")[0].substring(0, 1) +
-              this.user.name.split(" ")[1].substring(0, 1)
-            }}</span>
+          <v-file-input
+            id="file-upload-upper-nav"
+            hide-input
+            accept="image/*"
+            truncate-length="1"
+            v-model="imgFile"
+            style="zoom: 0.1; opacity: 0"
+          ></v-file-input>
+          <v-avatar @click="setUserImag" color="cyan" size="40">
+            <img v-if="imgURL !== null" :src="imgURL" />
+            <span
+              v-else-if="user.image_id === null"
+              class="white--text text-h6"
+              >{{
+                this.user.name.split(" ")[0].substring(0, 1) +
+                this.user.name.split(" ")[1].substring(0, 1)
+              }}</span
+            >
             <img v-else :src="fetchImage(user.image_id)" alt="USER IMAGE" />
           </v-avatar>
         </v-toolbar>
@@ -140,6 +153,7 @@
 </template>
 
 <script>
+import firebase from "firebase";
 export default {
   props: ["random"],
   data() {
@@ -192,9 +206,14 @@ export default {
         name: "Unknown User",
         image_id: null,
       },
+      imgFile: null,
+      imgURL: null,
     };
   },
   methods: {
+    setUserImag() {
+      document.getElementById("file-upload-upper-nav").click();
+    },
     accepted(peep) {
       let person = peep;
       let currentUser = this.$store.getters.getPerson[0];
@@ -318,6 +337,28 @@ export default {
           this.person.push(person);
         }
       });
+    },
+    imgFile: async function () {
+      this.imgURL = window.URL.createObjectURL(this.imgFile);
+      if (this.imgFile !== null) {
+        let pathReference = firebase
+          .storage()
+          .ref()
+          .child("images/" + this.user.id);
+        await pathReference.put(this.imgFile).then(async () => {
+          await pathReference.getDownloadURL().then((url) => {
+            this.user.image_id = url;
+          });
+        });
+
+        await firebase
+          .firestore()
+          .collection("USERS")
+          .doc(this.user.id)
+          .update({
+            image_id: this.user.image_id,
+          });
+      }
     },
   },
 };

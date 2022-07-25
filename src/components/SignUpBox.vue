@@ -333,14 +333,14 @@ export default {
     nextSlide() {
       if (this.currentSlide < 1) {
         this.currentSlide = 1;
-        document.getElementsByTagName("button")[this.once ? 2 : 1].click();
+        document.getElementsByTagName("button")[this.once ? 3 : 1].click();
       } else {
         this.createAccount();
       }
     },
     previousSlide() {
       this.currentSlide = 0;
-      document.getElementsByTagName("button")[1].click();
+      document.getElementsByTagName("button")[2].click();
       this.once = true;
     },
     btnDisabled() {

@@ -176,7 +176,7 @@ export default {
           .catch((error) => {
             console.log("Error Saving Connections:", error);
           });
-        console.log(connection);
+        // console.log(connection);
       });
     },
     "$store.state.allConnectRequest": function () {
@@ -213,9 +213,7 @@ export default {
   color: #2c3e50;
 }
 div.v-carousel__controls{
-  zoom:0;
-  opacity: 0;
-  z-index: -99;
+  zoom:0.01;
 }
 .content-div {
   width: 85%;

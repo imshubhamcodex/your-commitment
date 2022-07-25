@@ -226,9 +226,8 @@ export default {
       if (isFound) {
         this.$store.commit("setIndividual", modifiedPeep);
       }
-      console.log("deleted commitment");
+      this.commitments = this.person.allCommitments;
       this.$store.commit("setIndividual", this.person);
-
       this.updateDB();
     },
     newCommitment() {
@@ -272,7 +271,7 @@ export default {
         ].upadatedOn = Date.now();
       }
 
-      console.log(this.commitments);
+      this.commitments = this.person.allCommitments;
       this.$store.commit("setIndividual", this.person);
       this.dialog = false;
       this.updateDB();
@@ -323,11 +322,11 @@ export default {
         gsap.fromTo(
           ".g-animi-commitment-card",
           {
-            duration: 0.7,
+            duration: 0,
             opacity: 0,
-            y: 20,
+            y: -20,
             ease: "back.out",
-            stagger: 0.2,
+            stagger: 0,
           },
           {
             duration: 0.7,
@@ -344,9 +343,6 @@ export default {
 </script>
 
 <style scoped>
-.g-animi-commitment-card {
- 
-}
 .title {
   font-size: 18px;
   font-weight: bold;

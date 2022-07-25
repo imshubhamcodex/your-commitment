@@ -340,24 +340,16 @@
                     <v-list-item-content v-else>
                       <v-row align="center" justify="end">
                         <v-btn
-                          v-if="!item.replicated.includes(UID)"
                           :disabled="item.id === UID"
                           @click="handleReplicate(item.commitment_id)"
                           icon
                           dark
+                          color="grey"
                           class="ma-2 white--text"
                           ><v-icon right dark
                             >mdi-book-plus-multiple</v-icon
                           ></v-btn
                         >
-                        <v-btn
-                          v-else
-                          @click="handleReplicate(item.commitment_id)"
-                          class="mr-5 yellow--text"
-                          icon
-                        >
-                          <v-icon dark>mdi-file-star</v-icon>
-                        </v-btn>
 
                         <v-btn
                           @click="handleStar(item.commitment_id)"
@@ -394,6 +386,9 @@
           </v-card>
         </v-dialog>
       </v-row>
+      <v-snackbar v-model="snackbar" rounded="pill" timeout="1500">
+        {{ this.msg }}
+      </v-snackbar>
     </template>
   </div>
 </template>
@@ -404,6 +399,8 @@ export default {
   props: ["accepted_id"],
   data() {
     return {
+      snackbar: false,
+      msg: "",
       dialog: false,
       dialogPersonIndex: -1,
       currentPage: 1,
@@ -562,16 +559,18 @@ export default {
         if (item.commitment_id === commitmentID) {
           if (item.replicated.includes(this.UID)) {
             item.replicated.splice(item.replicated.indexOf(this.UID), 1);
-
             this.person[this.dialogPersonIndex].replicatedCount -= 1;
+            this.msg = "Unreplicated";
           } else {
             item.replicated.push(this.UID);
             toCopy = item;
-
             this.person[this.dialogPersonIndex].replicatedCount += 1;
+            this.msg = "Replicated";
           }
         }
       });
+      this.snackbar = true;
+
       let currentUser = this.$store.getters.getPerson[0];
       currentUser.allCommitments.forEach((item) => {
         if (item.commitment_id === commitmentID) {
@@ -596,11 +595,10 @@ export default {
         };
         currentUser.allCommitments.push(copyCommit);
       }
-
       currentUser.commitments = currentUser.allCommitments.length;
 
-      this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
+      this.$store.commit("setIndividual", currentUser);
       this.updateDB();
     },
     handleSeen() {

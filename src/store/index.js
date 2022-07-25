@@ -114,7 +114,6 @@ export default new Vuex.Store({
       });
     },
     setIndividual(state, payload) {
-      console.log(payload);
       state.people.forEach((person) => {
         if (person.id === payload.id) {
           person = payload;
@@ -164,6 +163,19 @@ export default new Vuex.Store({
       state.people.forEach((person) => {
         if (person.id === state.UID) {
           person.connectRequestReceived.splice(payload, 1);
+        }
+      });
+    },
+    removeCommitment(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === payload) {
+          person.commitments = 0;
+          person.allCommitments = [];
+          person.starsCount = 0;
+          person.seenCount = 0;
+          person.replicatedCount = 0;
+          person.sharedCount = 0;
+          return;
         }
       });
     },

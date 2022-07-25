@@ -114,7 +114,6 @@ export default {
         .collection("CONNECT_REQ")
         .onSnapshot((res) => {
           let data = res.docs.map((doc) => doc.data());
-          let ids = res.docs.map((doc) => doc.id);
           let currentUser = this.$store.getters.getPerson[0];
           let connectRequestReceivedOld = [
             ...currentUser.connectRequestReceived,
@@ -145,6 +144,23 @@ export default {
             });
           }
           this.random = (Math.random() + 1).toString(36).substring(2);
+        });
+
+      firebase
+        .firestore()
+        .collection("COMMITMENTS")
+        .onSnapshot((res) => {
+          let data = res.docs.map((doc) => doc.data());
+          let allIds = res.docs.map((doc) => doc.id);
+          data.forEach((commitment, index) => {
+            if (commitment.COMMITMENTS.length === 0) {
+              this.$store.commit("removeCommitment", allIds[index]);
+            } else {
+              console.log(commitment.COMMITMENTS[0].replicated);
+              this.$store.commit("setCommitment", commitment.COMMITMENTS);
+            }
+          });
+          console.log("COMMITMENTS", data);
         });
     }
   },
