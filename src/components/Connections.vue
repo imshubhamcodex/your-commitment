@@ -49,7 +49,6 @@
                   <v-card
                     v-show="k + (n - 1) * 3 <= person.length"
                     class="mx-auto g-animi-connection-card people-card"
-                    max-width="344"
                     outlined
                     style="position: relative"
                     @click="viewPerson(k + (n - 1) * 3 - 1)"
@@ -635,6 +634,9 @@ export default {
   }
   #card-container {
     margin-top: 10px !important;
+  }
+  .col {
+    min-width: 100%;
   }
 }
 </style>

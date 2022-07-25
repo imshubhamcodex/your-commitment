@@ -49,7 +49,6 @@
               <template>
                 <v-card
                   class="mx-auto g-animi-dash-card people-card"
-                  max-width="344"
                   outlined
                   v-show="k + (n - 1) * 3 <= person.length"
                   :disabled="k + (n - 1) * 3 > person.length"
@@ -62,7 +61,8 @@
                         v-if="
                           k + (n - 1) * 3 <= person.length &&
                           person[k + (n - 1) * 3 - 1].email ===
-                            'edwssm777@gmail.com'
+                            'edwssm777@gmail.com' &&
+                          innerWidth < 500
                         "
                         x-small
                         icon
@@ -762,6 +762,9 @@ export default {
     margin-top: 10px !important;
     overflow: auto !important;
     padding-bottom: 200px;
+  }
+  .col {
+    min-width: 100%;
   }
 }
 </style>
