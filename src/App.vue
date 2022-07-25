@@ -212,6 +212,11 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+div.v-carousel__controls{
+  zoom:0;
+  opacity: 0;
+  z-index: -99;
+}
 .content-div {
   width: 85%;
   float: right;
