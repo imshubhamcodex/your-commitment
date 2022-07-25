@@ -326,8 +326,10 @@
 </template>
 
 <script>
+import firebase from "firebase"
 import gsap from "gsap";
 export default {
+  props: ["forConn"],
   data() {
     return {
       person: [],
@@ -468,7 +470,7 @@ export default {
       }
     },
 
-    deletePerson(person) {
+    async deletePerson(person) {
       this.connections.forEach((connection, index) => {
         if (connection.connectedWith.includes(person.id)) {
           if (connection.connectedWith.length === 1) {
@@ -504,11 +506,46 @@ export default {
       });
       person.connections = person.allConnections.length;
 
-      this.$store.commit("setIndividual", currentUser);
-      this.$store.commit("setIndividual", person);
+      currentUser.connectRequestReceived.splice(
+        currentUser.connectRequestReceived.indexOf(person.id),
+        1
+      );
+
+      person.connectRequestSend.splice(
+        person.connectRequestSend.indexOf(currentUser.id),
+        1
+      );
+
+      let arr = [];
+      person.connectRequestSend.forEach((conn) => {
+        let connectReq = {
+          from: person.id,
+          to: conn,
+        };
+        arr.push(connectReq);
+      });
+
+      // await firebase
+      //   .firestore()
+      //   .collection("CONNECT_REQ")
+      //   .doc(person.id)
+      //   .set(
+      //     {
+      //       CONNECT_REQ: arr,
+      //     },
+      //     { merge: true }
+      //   )
+      //   .catch((error) => {
+      //     console.log("Error Sending Connect Request:", error);
+      //   });
+
+      // this.$store.commit("setIndividual", currentUser);
+      // this.$store.commit("setIndividual", person);
+
+
+
 
       this.updateDB();
-      console.log(currentUser);
     },
     fetchImage(img) {
       console.log("fetching image");
@@ -517,7 +554,7 @@ export default {
     updateDB() {
       let allCommitments = [];
       let allConnections = [];
-      let allConnectRequest = [];
+      // let allConnectRequest = [];
 
       let allPeople = this.$store.getters.getPeople;
 
@@ -531,21 +568,21 @@ export default {
         allConnections.push(arr);
       });
 
-      allPeople.forEach((peep) => {
-        let arr = [];
-        peep.connectRequestSend.forEach((conn) => {
-          let connectReq = {
-            from: peep.id,
-            to: conn,
-          };
-          arr.push(connectReq);
-        });
-        arr.push(peep.id);
-        allConnectRequest.push(arr);
-      });
+      // allPeople.forEach((peep) => {
+      //   let arr = [];
+      //   peep.connectRequestSend.forEach((conn) => {
+      //     let connectReq = {
+      //       from: peep.id,
+      //       to: conn,
+      //     };
+      //     arr.push(connectReq);
+      //   });
+      //   arr.push(peep.id);
+      //   allConnectRequest.push(arr);
+      // });
       this.$store.commit("setAllCommitments", allCommitments);
       this.$store.commit("setAllConnections", allConnections);
-      this.$store.commit("setAllConnectRequest", allConnectRequest);
+      // this.$store.commit("setAllConnectRequest", allConnectRequest);
     },
   },
   mounted() {
@@ -606,6 +643,39 @@ export default {
         );
       }
     }, 50);
+  },
+  watch: {
+    forConn: function () {
+      this.connections = this.$store.getters.getPerson[0].allConnections;
+      let people = this.$store.getters.getPeople;
+      this.UID = this.$store.getters.getUID;
+      this.person = [];
+
+      people.forEach((person) => {
+        this.connections.forEach((connection) => {
+          if (connection.connectedWith.includes(person.id)) {
+            person.connectedOn = connection.connectedOn;
+            this.person.push(person);
+          }
+        });
+      });
+
+      this.users = this.person;
+
+      if (window.innerWidth < 500) {
+        if (this.users.length <= 2) {
+          this.person = this.users;
+        } else {
+          this.person = this.users.slice(0, 2);
+        }
+      } else {
+        if (this.users.length <= 6) {
+          this.person = this.users;
+        } else {
+          this.person = this.users.slice(0, 6);
+        }
+      }
+    },
   },
 };
 </script>

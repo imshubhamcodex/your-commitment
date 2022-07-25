@@ -179,5 +179,14 @@ export default new Vuex.Store({
         }
       });
     },
+    removeConnection(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === payload) {
+          person.connections = 0;
+          person.allConnections = [];
+          return;
+        }
+      });
+    },
   },
 });

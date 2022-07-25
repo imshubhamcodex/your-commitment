@@ -2,9 +2,14 @@
   <div>
     <TopNav @accepted="accepted" :random="random" />
     <SideNav />
-    <Dashboard :accepted_id="accepted_id" v-if="showDashboard" />
+    <Dashboard
+      :accepted_id="accepted_id"
+      :forConn="forConn"
+      :random="random" 
+      v-if="showDashboard"
+    />
     <Commitments v-if="showCommitments" />
-    <Connections v-if="showConnections" />
+    <Connections :forConn="forConn" v-if="showConnections" />
     <Help v-if="showHelp" />
 
     <template>
@@ -64,6 +69,7 @@ export default {
       accepted_id: "",
       dialog: false,
       random: 1,
+      forConn: 1,
     };
   },
   methods: {
@@ -156,11 +162,26 @@ export default {
             if (commitment.COMMITMENTS.length === 0) {
               this.$store.commit("removeCommitment", allIds[index]);
             } else {
-              console.log(commitment.COMMITMENTS[0].replicated);
               this.$store.commit("setCommitment", commitment.COMMITMENTS);
             }
           });
-          console.log("COMMITMENTS", data);
+        });
+
+      firebase
+        .firestore()
+        .collection("CONNECTIONS")
+        .onSnapshot((res) => {
+          let data = res.docs.map((doc) => doc.data());
+          let allIds = res.docs.map((doc) => doc.id);
+          data.forEach((conn, index) => {
+            if (conn.CONNECTIONS.length === 0) {
+              this.$store.commit("removeConnection", allIds[index]);
+            } else {
+              this.$store.commit("setConnection", conn.CONNECTIONS);
+            }
+          });
+          this.forConn = (Math.random() + 1).toString(36).substring(2);
+          console.log("CONNECTIONS", data);
         });
     }
   },

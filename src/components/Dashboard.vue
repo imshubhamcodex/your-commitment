@@ -394,9 +394,10 @@
 </template>
 
 <script>
+import firebase from "firebase";
 import gsap from "gsap";
 export default {
-  props: ["accepted_id"],
+  props: ["accepted_id", "forConn", "random"],
   data() {
     return {
       snackbar: false,
@@ -644,7 +645,10 @@ export default {
             from: peep.id,
             to: conn,
           };
-          arr.push(connectReq);
+
+          if (!arr.some((req) => req["to"] === conn)) {
+            arr.push(connectReq);
+          }
         });
         arr.push(peep.id);
         allConnectRequest.push(arr);
@@ -681,11 +685,26 @@ export default {
     if (currentUser.length > 0) {
       currentUser[0].allConnections.forEach((item) => {
         if (item.connectedWith.length > 0)
-          this.connectedPerson.push(...item.connectedWith);
+          if (!this.connectedPerson.includes(...item.connectedWith))
+            this.connectedPerson.push(...item.connectedWith);
       });
 
-      if (currentUser[0].connectRequestSend.length > 0)
-        this.sentRequests = [...currentUser[0].connectRequestSend];
+      // if (currentUser[0].connectRequestSend.length > 0)
+      //   this.sentRequests = [...currentUser[0].connectRequestSend];
+
+      firebase
+        .firestore()
+        .collection("CONNECT_REQ")
+        .doc(currentUser[0].id)
+        .get()
+        .then((res) => {
+          res.data().CONNECT_REQ.forEach((item) => {
+            this.sentRequests.push(item.to);
+          });
+        })
+        .catch((error) => {
+          console.log("Error Fetching Connect Request:", error);
+        });
     }
 
     let inv = setInterval(() => {
@@ -715,6 +734,29 @@ export default {
     accepted_id: function () {
       this.connectedPerson.push(this.accepted_id);
     },
+    forConn: function () {
+      this.UID = this.$store.getters.getUID;
+      let currentUser = this.$store.getters.getPerson;
+      // console.log(currentUser);
+
+      this.allRequestRecivedID = currentUser[0].connectRequestReceived;
+      if (currentUser.length > 0) {
+        currentUser[0].allConnections.forEach((item) => {
+          if (item.connectedWith.length > 0)
+            if (!this.connectedPerson.includes(...item.connectedWith))
+              this.connectedPerson.push(...item.connectedWith);
+        });
+
+        if (this.connectedPerson.length > 0) {
+          this.connectedPerson.forEach((item) => {
+            this.sentRequests.includes(item)
+              ? this.sentRequests.splice(this.sentRequests.indexOf(item), 1)
+              : null;
+          });
+        }
+      }
+    },
+    random: function () {},
     "$store.state.notifications": function () {
       let currentUser = this.$store.getters.getPerson;
       if (currentUser.length > 0) {

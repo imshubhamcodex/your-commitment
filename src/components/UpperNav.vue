@@ -214,7 +214,7 @@ export default {
     setUserImag() {
       document.getElementById("file-upload-upper-nav").click();
     },
-    accepted(peep) {
+    async accepted(peep) {
       let person = peep;
       let currentUser = this.$store.getters.getPerson[0];
       currentUser.connectRequestReceived.splice(
@@ -241,10 +241,34 @@ export default {
 
       this.$store.commit("setIndividual", currentUser);
       this.$store.commit("setIndividual", person);
-
       this.person = this.person.filter((item) => item.id !== person.id);
       this.notifications -= 1;
       this.$store.commit("setNotifications", this.notifications);
+
+      let arr = [];
+      person.connectRequestSend.forEach((conn) => {
+        let connectReq = {
+          from: person.id,
+          to: conn,
+        };
+        arr.push(connectReq);
+      });
+
+      await firebase
+        .firestore()
+        .collection("CONNECT_REQ")
+        .doc(person.id)
+        .set(
+          {
+            CONNECT_REQ: arr,
+          },
+          { merge: true }
+        )
+        .catch((error) => {
+          console.log("Error Sending Connect Request:", error);
+        });
+
+
 
       this.updateDB();
 
@@ -267,7 +291,7 @@ export default {
       this.$store.commit("setIndividual", person);
 
       this.person = this.person.filter((item) => item.id !== person.id);
-      this.notifications -= 1;
+      this.notifications = currentUser.connectRequestReceived.length;
       console.log(this.notifications);
       this.$store.commit("setNotifications", this.notifications);
 
