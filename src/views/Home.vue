@@ -52,8 +52,10 @@ export default {
     },
   },
   mounted() {
-    console.log("mounted ");
     let UID = this.$store.state.UID;
+    if (UID === null || UID === "" || UID === undefined) {
+      this.$router.replace("/login");
+    }
 
     setTimeout(() => {
       firebase

@@ -160,6 +160,8 @@ export default {
           .catch((err) => {
             console.log("Error while sign out" + err);
           });
+
+        this.$store.state.replaceState({});
       }
     },
     donate() {
