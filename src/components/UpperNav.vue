@@ -8,7 +8,9 @@
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-icon class="mr-1" color="green">mdi-cellphone-text</v-icon>
-          <span class="grey--text font-shs mr-10">{{ last_active }}</span>
+          <span class="grey--text font-shs mr-10">{{
+            innerWidth > 330 ? last_active : last_active.substring(0, 7)
+          }}</span>
           <template>
             <div class="text-center">
               <v-menu
@@ -267,8 +269,6 @@ export default {
         .catch((error) => {
           console.log("Error Sending Connect Request:", error);
         });
-
-
 
       this.updateDB();
 

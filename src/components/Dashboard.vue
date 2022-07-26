@@ -3,6 +3,7 @@
     <div class="mt-2 ml-3 mr-3">
       <h1 class="font-h-big">Let's Catch Up</h1>
       <v-btn
+        v-if="innerWidth >= 500"
         id="prev-people-btn-dashboard"
         @click.stop="prevPage"
         :disabled="currentPage === 1"
@@ -15,6 +16,7 @@
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn
+        v-if="innerWidth >= 500"
         id="next-people-btn-dashboard"
         @click.stop="nextPage"
         class="action-btn mr-2"
@@ -32,11 +34,7 @@
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
       <div id="card-container-div">
-        <v-container
-          class="mt-8"
-          id="card-container"
-          v-on:scroll.passive="handleScroll"
-        >
+        <v-container class="mt-8" id="card-container">
           <v-row
             v-for="n in innerWidth < 500 ? 1 : 2"
             :key="n + 'row-dashboard'"
@@ -232,6 +230,35 @@
               </template>
             </v-col>
           </v-row>
+
+          <v-btn
+            v-if="innerWidth < 500"
+            @click.stop="prevPage"
+            :disabled="currentPage === 1"
+            style="margin-top: 60px; float: left"
+            fab
+            dark
+            x-small
+            color="blue"
+          >
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="innerWidth < 500"
+            @click.stop="nextPage"
+            class="mr-2"
+            style="margin-top: 60px; float: right"
+            fab
+            dark
+            x-small
+            color="blue"
+            :disabled="
+              (person.length < 2 && innerWidth < 500) ||
+              (this.users.length <= this.currentPage * 2 && innerWidth < 500)
+            "
+          >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
         </v-container>
       </div>
     </div>
@@ -296,23 +323,16 @@
 
                     <v-row align="center" justify="end" v-if="innerWidth > 500">
                       <v-btn
-                        v-if="!item.replicated.includes(UID)"
                         :disabled="item.id === UID"
                         @click="handleReplicate(item.commitment_id)"
-                        color="blue"
-                        class="mr-5 mr-5 ma-2 white--text"
-                        >replicate<v-icon right dark
+                        icon
+                        dark
+                        color="orange"
+                        class="ma-2 white--text"
+                        ><v-icon right dark
                           >mdi-book-plus-multiple</v-icon
                         ></v-btn
                       >
-                      <v-btn
-                        v-else
-                        @click="handleReplicate(item.commitment_id)"
-                        class="mr-5 yellow--text"
-                        icon
-                      >
-                        <v-icon dark>mdi-file-star</v-icon>
-                      </v-btn>
 
                       <v-btn
                         @click="handleStar(item.commitment_id)"
@@ -344,7 +364,7 @@
                           @click="handleReplicate(item.commitment_id)"
                           icon
                           dark
-                          color="grey"
+                          color="orange"
                           class="ma-2 white--text"
                           ><v-icon right dark
                             >mdi-book-plus-multiple</v-icon
@@ -455,16 +475,6 @@ export default {
     };
   },
   methods: {
-    handleScroll(e) {
-      if (
-        e.target.scrollHeight <
-        e.target.scrollTop + e.target.offsetHeight + 10
-      ) {
-        e.target.scrollTop = 0;
-        document.getElementById("next-people-btn-dashboard").click();
-        console.log("next");
-      }
-    },
     viewPerson(index) {
       this.dialogPersonIndex = index;
       this.dialog = true;
@@ -513,6 +523,7 @@ export default {
       this.updateDB();
     },
     nextPage() {
+      document.getElementById("card-container").scrollTo(0, 0);
       this.currentPage++;
       // this.users.length <= (this.currentPage+1) * 2
       if (window.innerWidth < 500) {
@@ -528,6 +539,7 @@ export default {
       }
     },
     prevPage() {
+      document.getElementById("card-container").scrollTo(0, 0);
       this.currentPage--;
 
       if (window.innerWidth < 500) {
@@ -538,7 +550,7 @@ export default {
         this.person = this.users.slice(upper_index - 6, upper_index);
       }
     },
-    handleStar(commitmentID) {
+    async handleStar(commitmentID) {
       this.person[this.dialogPersonIndex].allCommitments.forEach((item) => {
         if (item.commitment_id === commitmentID) {
           if (item.stars.includes(this.UID)) {
@@ -552,6 +564,21 @@ export default {
         }
       });
       this.$store.commit("setIndividual", this.person[this.dialogPersonIndex]);
+
+      await firebase
+        .firestore()
+        .collection("COMMITMENTS")
+        .doc(this.person[this.dialogPersonIndex].id)
+        .set(
+          {
+            COMMITMENTS: this.person[this.dialogPersonIndex].allCommitments,
+          },
+          { merge: true }
+        )
+        .catch((error) => {
+          console.log("Error Saving Commitment:", error);
+        });
+
       this.updateDB();
     },
     handleReplicate(commitmentID) {
@@ -668,7 +695,6 @@ export default {
       } else {
         this.person = this.users.slice(0, 2);
       }
-      console.log();
       document.getElementById("card-container").style.height =
         Number(window.innerHeight) - 50 + "px";
     } else {
@@ -801,7 +827,7 @@ export default {
   #card-container {
     margin-top: 10px !important;
     overflow: auto !important;
-    padding-bottom: 200px;
+    padding-bottom: 100px;
   }
   .col {
     min-width: 100%;

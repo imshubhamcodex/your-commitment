@@ -5,40 +5,12 @@
     <Dashboard
       :accepted_id="accepted_id"
       :forConn="forConn"
-      :random="random" 
+      :random="random"
       v-if="showDashboard"
     />
     <Commitments v-if="showCommitments" />
     <Connections :forConn="forConn" v-if="showConnections" />
     <Help v-if="showHelp" />
-
-    <template>
-      <v-row justify="center">
-        <v-dialog v-model="dialog" persistent max-width="290">
-          <v-card>
-            <v-card-title
-              style="text-align: center; display:block;margin:auto auto:"
-              class="font-h"
-            >
-              404. Page lost in space.
-            </v-card-title>
-            <v-card-text class="pt-2">
-              <div style="text-align: center; display:block;margin:auto auto:">
-                <p class="font-h mt-1">Login again</p>
-              </div>
-              <v-btn
-                @click="goToLogin"
-                color="blue"
-                dark
-                style="display: block; margin: 10px auto; width: 100%"
-              >
-                login
-              </v-btn>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
-      </v-row>
-    </template>
   </div>
 </template>
 
@@ -67,14 +39,12 @@ export default {
       showConnections: false,
       showHelp: false,
       accepted_id: "",
-      dialog: false,
       random: 1,
       forConn: 1,
     };
   },
   methods: {
     goToLogin() {
-      this.dialog = false;
       this.$router.replace("/login");
     },
     accepted(id) {
@@ -85,105 +55,98 @@ export default {
     console.log("mounted ");
     let UID = this.$store.state.UID;
 
-    if (UID === null && false) {
-      this.dialog = true;
-      return;
-    } else {
-      setTimeout(() => {
-        firebase
-          .firestore()
-          .collection("LAST_ACTIVE")
-          .doc(UID)
-          .set(
-            {
-              active: Date.now(),
-            },
-            { merge: true }
-          )
-          .catch((error) => {
-            console.log("Error Saving LAST ACTIVE:", error);
-          });
-      }, 15 * 1000);
-
+    setTimeout(() => {
       firebase
         .firestore()
         .collection("LAST_ACTIVE")
         .doc(UID)
-        .onSnapshot((doc) => {
-          if (doc.data().active) {
-            this.$store.commit("setLastActive", doc.data().active);
-          }
+        .set(
+          {
+            active: Date.now(),
+          },
+          { merge: true }
+        )
+        .catch((error) => {
+          console.log("Error Saving LAST ACTIVE:", error);
         });
+    }, 15 * 1000);
 
-      firebase
-        .firestore()
-        .collection("CONNECT_REQ")
-        .onSnapshot((res) => {
-          let data = res.docs.map((doc) => doc.data());
-          let currentUser = this.$store.getters.getPerson[0];
-          let connectRequestReceivedOld = [
-            ...currentUser.connectRequestReceived,
-          ];
-          let connectRequestReceivedNew = [];
+    firebase
+      .firestore()
+      .collection("LAST_ACTIVE")
+      .doc(UID)
+      .onSnapshot((doc) => {
+        if (doc.data().active) {
+          this.$store.commit("setLastActive", doc.data().active);
+        }
+      });
 
-          data.forEach((request, index) => {
-            request.CONNECT_REQ.forEach((req) => {
-              if (req.to === UID) {
-                connectRequestReceivedNew.push(req.from);
-              }
-            });
-          });
-          console.log(connectRequestReceivedNew, connectRequestReceivedOld);
-          if (
-            connectRequestReceivedNew.sort().toString() !==
-            connectRequestReceivedOld.sort().toString()
-          ) {
-            connectRequestReceivedNew.forEach((ele) => {
-              if (!connectRequestReceivedOld.includes(ele)) {
-                this.$store.commit("addConnectRequestReceived", ele);
-              }
-            });
-            connectRequestReceivedOld.forEach((ele) => {
-              if (!connectRequestReceivedNew.includes(ele)) {
-                this.$store.commit("removeConnectRequestReceived", ele);
-              }
-            });
-          }
-          this.random = (Math.random() + 1).toString(36).substring(2);
-        });
+    firebase
+      .firestore()
+      .collection("CONNECT_REQ")
+      .onSnapshot((res) => {
+        let data = res.docs.map((doc) => doc.data());
+        let currentUser = this.$store.getters.getPerson[0];
+        let connectRequestReceivedOld = [...currentUser.connectRequestReceived];
+        let connectRequestReceivedNew = [];
 
-      firebase
-        .firestore()
-        .collection("COMMITMENTS")
-        .onSnapshot((res) => {
-          let data = res.docs.map((doc) => doc.data());
-          let allIds = res.docs.map((doc) => doc.id);
-          data.forEach((commitment, index) => {
-            if (commitment.COMMITMENTS.length === 0) {
-              this.$store.commit("removeCommitment", allIds[index]);
-            } else {
-              this.$store.commit("setCommitment", commitment.COMMITMENTS);
+        data.forEach((request, index) => {
+          request.CONNECT_REQ.forEach((req) => {
+            if (req.to === UID) {
+              connectRequestReceivedNew.push(req.from);
             }
           });
         });
-
-      firebase
-        .firestore()
-        .collection("CONNECTIONS")
-        .onSnapshot((res) => {
-          let data = res.docs.map((doc) => doc.data());
-          let allIds = res.docs.map((doc) => doc.id);
-          data.forEach((conn, index) => {
-            if (conn.CONNECTIONS.length === 0) {
-              this.$store.commit("removeConnection", allIds[index]);
-            } else {
-              this.$store.commit("setConnection", conn.CONNECTIONS);
+        console.log(connectRequestReceivedNew, connectRequestReceivedOld);
+        if (
+          connectRequestReceivedNew.sort().toString() !==
+          connectRequestReceivedOld.sort().toString()
+        ) {
+          connectRequestReceivedNew.forEach((ele) => {
+            if (!connectRequestReceivedOld.includes(ele)) {
+              this.$store.commit("addConnectRequestReceived", ele);
             }
           });
-          this.forConn = (Math.random() + 1).toString(36).substring(2);
-          console.log("CONNECTIONS", data);
+          connectRequestReceivedOld.forEach((ele) => {
+            if (!connectRequestReceivedNew.includes(ele)) {
+              this.$store.commit("removeConnectRequestReceived", ele);
+            }
+          });
+        }
+        this.random = (Math.random() + 1).toString(36).substring(2);
+      });
+
+    firebase
+      .firestore()
+      .collection("COMMITMENTS")
+      .onSnapshot((res) => {
+        let data = res.docs.map((doc) => doc.data());
+        let allIds = res.docs.map((doc) => doc.id);
+        data.forEach((commitment, index) => {
+          if (commitment.COMMITMENTS.length === 0) {
+            this.$store.commit("removeCommitment", allIds[index]);
+          } else {
+            this.$store.commit("setCommitment", commitment.COMMITMENTS);
+          }
         });
-    }
+      });
+
+    firebase
+      .firestore()
+      .collection("CONNECTIONS")
+      .onSnapshot((res) => {
+        let data = res.docs.map((doc) => doc.data());
+        let allIds = res.docs.map((doc) => doc.id);
+        data.forEach((conn, index) => {
+          if (conn.CONNECTIONS.length === 0) {
+            this.$store.commit("removeConnection", allIds[index]);
+          } else {
+            this.$store.commit("setConnection", conn.CONNECTIONS);
+          }
+        });
+        this.forConn = (Math.random() + 1).toString(36).substring(2);
+        console.log("CONNECTIONS", data);
+      });
   },
   watch: {
     "$store.state.openTab": function () {

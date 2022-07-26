@@ -3,6 +3,7 @@
     <div class="mt-2 ml-3 mr-3">
       <h1 class="font-h-big">Known Faces</h1>
       <v-btn
+        v-if="innerWidth >= 500"
         @click.stop="prevPage"
         :disabled="currentPage === 1"
         class="action-btn"
@@ -14,6 +15,7 @@
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn
+        v-if="innerWidth >= 500"
         @click.stop="nextPage"
         class="action-btn mr-2"
         fab
@@ -159,6 +161,34 @@
               </v-col>
             </v-row>
           </template>
+          <v-btn
+            v-if="innerWidth < 500"
+            @click.stop="prevPage"
+            :disabled="currentPage === 1"
+            style="margin-top: 60px; float: left"
+            fab
+            dark
+            x-small
+            color="blue"
+          >
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="innerWidth < 500"
+            @click.stop="nextPage"
+            class="mr-2"
+            style="margin-top: 60px; float: right"
+            fab
+            dark
+            x-small
+            color="blue"
+            :disabled="
+              (person.length < 2 && innerWidth < 500) ||
+              (this.users.length <= this.currentPage * 2 && innerWidth < 500)
+            "
+          >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
         </v-container>
       </template>
     </div>
@@ -223,23 +253,16 @@
 
                     <v-row align="center" justify="end" v-if="innerWidth > 500">
                       <v-btn
-                        v-if="!item.replicated.includes(UID)"
                         :disabled="item.id === UID"
                         @click="handleReplicate(item.commitment_id)"
-                        color="blue"
-                        class="mr-5 mr-5 ma-2 white--text"
-                        >replicate<v-icon right dark
+                        icon
+                        dark
+                        color="orange"
+                        class="ma-2 white--text"
+                        ><v-icon right dark
                           >mdi-book-plus-multiple</v-icon
                         ></v-btn
                       >
-                      <v-btn
-                        v-else
-                        @click="handleReplicate(item.commitment_id)"
-                        class="mr-5 yellow--text"
-                        icon
-                      >
-                        <v-icon dark>mdi-file-star</v-icon>
-                      </v-btn>
 
                       <v-btn
                         @click="handleStar(item.commitment_id)"
@@ -267,24 +290,16 @@
                     <v-list-item-content v-else>
                       <v-row align="center" justify="end">
                         <v-btn
-                          v-if="!item.replicated.includes(UID)"
                           :disabled="item.id === UID"
                           @click="handleReplicate(item.commitment_id)"
                           icon
                           dark
+                          color="orange"
                           class="ma-2 white--text"
                           ><v-icon right dark
                             >mdi-book-plus-multiple</v-icon
                           ></v-btn
                         >
-                        <v-btn
-                          v-else
-                          @click="handleReplicate(item.commitment_id)"
-                          class="mr-5 yellow--text"
-                          icon
-                        >
-                          <v-icon dark>mdi-file-star</v-icon>
-                        </v-btn>
 
                         <v-btn
                           @click="handleStar(item.commitment_id)"
@@ -326,7 +341,7 @@
 </template>
 
 <script>
-import firebase from "firebase"
+import firebase from "firebase";
 import gsap from "gsap";
 export default {
   props: ["forConn"],
@@ -446,6 +461,7 @@ export default {
       }
     },
     nextPage() {
+      document.getElementById("card-container").scrollTo(0, 0);
       this.currentPage++;
       if (window.innerWidth < 500) {
         let upper_index = this.currentPage * 2;
@@ -460,6 +476,7 @@ export default {
       }
     },
     prevPage() {
+      document.getElementById("card-container").scrollTo(0, 0);
       this.currentPage--;
       if (window.innerWidth < 500) {
         let upper_index = this.currentPage * 2;
@@ -542,9 +559,6 @@ export default {
       // this.$store.commit("setIndividual", currentUser);
       // this.$store.commit("setIndividual", person);
 
-
-
-
       this.updateDB();
     },
     fetchImage(img) {
@@ -611,6 +625,8 @@ export default {
       } else {
         this.person = this.users.slice(0, 2);
       }
+      document.getElementById("card-container").style.height =
+        Number(window.innerHeight) - 50 + "px";
     } else {
       if (this.users.length <= 6) {
         this.person = this.users;
@@ -704,6 +720,8 @@ export default {
   }
   #card-container {
     margin-top: 10px !important;
+    overflow: auto !important;
+    padding-bottom: 100px;
   }
   .col {
     min-width: 100%;

@@ -84,6 +84,8 @@
         <v-btn @click="signOut" fab dark small color="cyan">
           <v-icon dark> mdi-power </v-icon>
         </v-btn>
+         <hr class="mt-8 ml-1" />
+        <span class="ml-1" id="version">v1.02</span>
       </v-list-item>
     </v-list>
   </v-card>
@@ -137,25 +139,28 @@ export default {
       }
     },
     signOut() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$store.replaceState({
-            openTab: "DASHBOARD",
-            UID: false,
-            people: [],
-            notifications: -1,
-            allCommitments: [],
-            allConnections: [],
-            allConnectRequest: [],
+      let isOut = confirm("Are you sure to logout?");
+      if (isOut) {
+        firebase
+          .auth()
+          .signOut()
+          .then(() => {
+            this.$store.replaceState({
+              openTab: "DASHBOARD",
+              UID: false,
+              people: [],
+              notifications: -1,
+              allCommitments: [],
+              allConnections: [],
+              allConnectRequest: [],
+            });
+            localStorage.setItem("email-commitment", "");
+            this.$router.replace("/");
+          })
+          .catch((err) => {
+            console.log("Error while sign out" + err);
           });
-          localStorage.setItem("email-commitment", "");
-          this.$router.replace("/");
-        })
-        .catch((err) => {
-          console.log("Error while sign out" + err);
-        });
+      }
     },
     donate() {
       this.makePayment();
@@ -230,6 +235,12 @@ export default {
     padding-top: 20px;
     margin-bottom: 0px;
     padding-bottom: 20px;
+  }
+}
+
+@media(max-width:370px){
+  #version{
+    zoom:0.8;
   }
 }
 </style>
