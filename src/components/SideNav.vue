@@ -84,7 +84,7 @@
         <v-btn @click="signOut" fab dark small color="cyan">
           <v-icon dark> mdi-power </v-icon>
         </v-btn>
-         <hr class="mt-8 ml-1" />
+        <hr class="mt-8 ml-1" />
         <span class="ml-1" id="version">v1.02</span>
       </v-list-item>
     </v-list>
@@ -231,16 +231,29 @@ export default {
     margin-left: -10px;
     margin-top: 70px;
   }
-  #lower-list {
-    padding-top: 20px;
-    margin-bottom: 0px;
-    padding-bottom: 20px;
+}
+
+@media (max-width: 370px) {
+  #version {
+    zoom: 0.8;
   }
 }
 
-@media(max-width:370px){
-  #version{
-    zoom:0.8;
+@media (min-height: 830px) and (max-width: 480px) {
+  #lower-list {
+    margin-top: 160px !important;
+  }
+}
+
+@media (max-height: 640px) {
+  #power-btn {
+    margin-left: -10px;
+    margin-top: 0px;
+  }
+  #lower-list {
+    padding-top: 10px;
+    margin-bottom: 0px;
+    padding-bottom: 30px;
   }
 }
 </style>
