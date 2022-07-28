@@ -161,7 +161,7 @@ export default {
             console.log("Error while sign out" + err);
           });
 
-        this.$store.state.replaceState({});
+        this.$store.replaceState({});
       }
     },
     donate() {

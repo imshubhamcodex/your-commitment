@@ -123,8 +123,16 @@ export default new Vuex.Store({
     },
     setLastActive(state, payload) {
       state.people.forEach((person) => {
-        if (person.id === state.UID) {
-          person.last_active = payload;
+        if (person.id === payload.id) {
+          person.last_active = payload.active;
+          return;
+        }
+      });
+    },
+    setAllUserActive(state, payload) {
+      state.people.forEach((person) => {
+        if (person.id === payload.id) {
+          person.last_active = payload.active;
           return;
         }
       });

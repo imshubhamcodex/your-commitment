@@ -1,11 +1,12 @@
 <template>
   <div>
-    <TopNav @accepted="accepted" :random="random" />
+    <TopNav @accepted="accepted" :random="random" :lastactive="lastactive" />
     <SideNav />
     <Dashboard
       :accepted_id="accepted_id"
       :forConn="forConn"
       :random="random"
+      :lastactive="lastactive"
       v-if="showDashboard"
     />
     <Commitments v-if="showCommitments" />
@@ -41,6 +42,7 @@ export default {
       accepted_id: "",
       random: 1,
       forConn: 1,
+      lastactive: 1,
     };
   },
   methods: {
@@ -57,7 +59,7 @@ export default {
       this.$router.replace("/login");
     }
 
-    setTimeout(() => {
+    setInterval(() => {
       firebase
         .firestore()
         .collection("LAST_ACTIVE")
@@ -71,16 +73,22 @@ export default {
         .catch((error) => {
           console.log("Error Saving LAST ACTIVE:", error);
         });
-    }, 15 * 1000);
+    }, 60 * 1000);
 
     firebase
       .firestore()
       .collection("LAST_ACTIVE")
-      .doc(UID)
-      .onSnapshot((doc) => {
-        if (doc.data().active) {
-          this.$store.commit("setLastActive", doc.data().active);
-        }
+      .onSnapshot((res) => {
+        let data = res.docs.map((doc) => doc.data());
+        let allIds = res.docs.map((doc) => doc.id);
+        data.forEach((state, index) => {
+          let obj = {
+            id: allIds[index],
+            active: state.active,
+          };
+          this.$store.commit("setAllUserActive", obj);
+          this.lastactive = (Math.random() + 1).toString(36).substring(2);
+        });
       });
 
     firebase
@@ -99,7 +107,7 @@ export default {
             }
           });
         });
-        console.log(connectRequestReceivedNew, connectRequestReceivedOld);
+        // console.log(connectRequestReceivedNew, connectRequestReceivedOld);
         if (
           connectRequestReceivedNew.sort().toString() !==
           connectRequestReceivedOld.sort().toString()
@@ -147,7 +155,7 @@ export default {
           }
         });
         this.forConn = (Math.random() + 1).toString(36).substring(2);
-        console.log("CONNECTIONS", data);
+        // console.log("CONNECTIONS", data);
       });
   },
   watch: {

@@ -126,6 +126,36 @@
                         >
                         {{ person[k + (n - 1) * 3 - 1].starsCount }} Stars
                       </div>
+                      <div
+                        v-if="k + (n - 1) * 3 <= person.length"
+                        class="font-shs mt-3"
+                      >
+                        <v-icon
+                          :class="
+                            person[k + (n - 1) * 3 - 1].last_active +
+                              60 * 1000 >
+                            Date.now()
+                              ? 'blink_me mr-2 mt-n2'
+                              : 'mr-2 mt-n2'
+                          "
+                          :color="
+                            person[k + (n - 1) * 3 - 1].last_active +
+                              60 * 1000 >
+                            Date.now()
+                              ? 'green'
+                              : 'grey'
+                          "
+                          >mdi-cellphone-text</v-icon
+                        >
+                        {{
+                          person[k + (n - 1) * 3 - 1].last_active + 60 * 1000 >
+                          Date.now()
+                            ? "Online"
+                            : new Date(person[k + (n - 1) * 3 - 1].last_active)
+                                .toString()
+                                .substring(0, 25)
+                        }}
+                      </div>
                     </v-list-item-content>
 
                     <v-avatar
@@ -417,7 +447,7 @@
 import firebase from "firebase";
 import gsap from "gsap";
 export default {
-  props: ["accepted_id", "forConn", "random"],
+  props: ["accepted_id", "forConn", "random", "lastactive"],
   data() {
     return {
       snackbar: false,
@@ -760,6 +790,17 @@ export default {
     accepted_id: function () {
       this.connectedPerson.push(this.accepted_id);
     },
+    lastactive: function () {
+      let users = this.$store.getters.getPeople;
+      users.forEach((item) => {
+        this.person.forEach((peep) => {
+          if (item.id === peep.id) {
+            peep.last_active = item.last_active;
+          }
+        });
+      });
+      console.log("hi");
+    },
     forConn: function () {
       this.UID = this.$store.getters.getUID;
       let currentUser = this.$store.getters.getPerson;
@@ -831,6 +872,16 @@ export default {
   }
   .col {
     min-width: 100%;
+  }
+
+  .blink_me {
+    animation: blinker 1s linear infinite;
+  }
+
+  @keyframes blinker {
+    50% {
+      opacity: 0;
+    }
   }
 }
 </style>

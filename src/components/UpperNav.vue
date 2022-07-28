@@ -157,7 +157,7 @@
 <script>
 import firebase from "firebase";
 export default {
-  props: ["random"],
+  props: ["random", "lastactive"],
   data() {
     return {
       notifications: 0,
@@ -210,6 +210,7 @@ export default {
       },
       imgFile: null,
       imgURL: null,
+      innerWidth: 1000,
     };
   },
   methods: {
@@ -336,6 +337,7 @@ export default {
     },
   },
   mounted() {
+    this.innerWidth = window.innerWidth;
     this.UID = this.$store.getters.getUID;
     this.user = this.$store.getters.getPerson[0];
     this.last_active = new Date(this.user.last_active)
@@ -350,6 +352,9 @@ export default {
     });
   },
   watch: {
+    lastactive: function (val) {
+      this.last_active = new Date(val).toString().substring(4, 15);
+    },
     random: function () {
       this.person = [];
       this.UID = this.$store.getters.getUID;
